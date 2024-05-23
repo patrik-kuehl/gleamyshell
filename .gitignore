@@ -1,0 +1,8 @@
+*.beam
+*.ez
+/build
+erl_crash.dump
+/node_modules
+/.vscode
+/.idea
+.DS_Store

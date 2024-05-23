@@ -1,0 +1,21 @@
+name = "gleamyshell"
+version = "0.1.0"
+description = "A cross-platform Gleam library for executing shell commands."
+licences = ["MIT"]
+repository = { type = "github", user = "patrik-kuehl", repo = "gleamyshell" }
+gleam = ">= 1.1.0"
+
+[documentation]
+pages = [
+    { title = "CHANGELOG", path = "changelog.html", source = "CHANGELOG.md" },
+    { title = "LICENSE", path = "license.html", source = "LICENSE.md" },
+]
+
+[javascript.deno]
+allow_read = true
+
+[dependencies]
+gleam_stdlib = "0.37.0"
+
+[dev-dependencies]
+gleeunit = "1.1.2"

@@ -1,18 +1,18 @@
 # GleamyShell
 
-GleamyShell is a cross-platform Gleam library for executing shell commands that supports all non-browser targets
-(Erlang, Bun, Deno, and Node.js).
+GleamyShell is a cross-platform Gleam library for executing shell commands that supports multiple targets (Erlang, Deno,
+and Node.js).
 
 ## When to use GleamyShell?
 
-GleamyShell provides the ability to execute shell commands on all non-browser targets. While this might sound amazing,
+GleamyShell provides the ability to execute shell commands on multiple targets. While this might sound amazing,
 supporting targets with fundamentally different concurrency models shrinks the common ground significantly.
 
 In order to keep the public API homogenous across different targets, GleamyShell only provides synchronous bindings.
 
 You should use GleamyShell if
 
--   you need or want to support all non-browser targets _and/or_
+-   you need or want to support multiple targets _and/or_
 -   synchronous shell command execution is not a concern.
 
 ## Changelog

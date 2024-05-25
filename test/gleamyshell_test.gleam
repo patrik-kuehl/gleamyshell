@@ -1,4 +1,3 @@
-import gleam/int
 import gleam/result
 import gleamyshell
 import startest.{describe, it}
@@ -10,8 +9,8 @@ pub fn main() {
 
 pub fn execute_tests() {
   describe("gleamyshell::execute", [
-    describe("successful commands", [
-      it("echo returns expected output", fn() {
+    describe("succeeded commands", [
+      it("returns expected output", fn() {
         let output = "Hello there!"
 
         gleamyshell.execute("echo", [output])
@@ -19,22 +18,21 @@ pub fn execute_tests() {
         |> expect.to_equal(output)
       }),
     ]),
-    describe("erroneous commands", [
-      it("unknown command returns exit code 127", fn() {
+    describe("failed commands", [
+      it("returns ENOENT error", fn() {
         gleamyshell.execute("_whoami_", [])
         |> expect.to_be_error()
-        |> expect.to_equal(gleamyshell.CommandError("", 127))
+        |> expect.to_equal(gleamyshell.Abort(gleamyshell.Enoent))
       }),
-      it("non-zero exit code via exit command", fn() {
-        let output = "Nope"
-        let exit_code = 5
+      it("returns exit code 127", fn() {
+        let failure =
+          gleamyshell.execute("/bin/sh", ["-c", "_whoami_"])
+          |> expect.to_be_error()
 
-        gleamyshell.execute(
-          "echo " <> output <> " && exit " <> int.to_string(exit_code),
-          [],
-        )
-        |> expect.to_be_error()
-        |> expect.to_equal(gleamyshell.CommandError(output, exit_code))
+        case failure {
+          gleamyshell.Failure(_, exit_code) -> expect.to_equal(exit_code, 127)
+          _ -> panic
+        }
       }),
     ]),
   ])

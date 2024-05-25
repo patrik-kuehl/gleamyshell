@@ -1,4 +1,5 @@
 import gleam/int
+import gleam/result
 import gleamyshell
 import startest.{describe, it}
 import startest/expect
@@ -15,7 +16,7 @@ pub fn execute_tests() {
 
         gleamyshell.execute("echo", [output])
         |> expect.to_be_ok()
-        |> expect.to_equal(output <> "\n")
+        |> expect.to_equal(output)
       }),
     ]),
     describe("erroneous commands", [
@@ -33,8 +34,22 @@ pub fn execute_tests() {
           [],
         )
         |> expect.to_be_error()
-        |> expect.to_equal(gleamyshell.CommandError(output <> "\n", exit_code))
+        |> expect.to_equal(gleamyshell.CommandError(output, exit_code))
       }),
     ]),
+  ])
+}
+
+pub fn cwd_tests() {
+  describe("gleamyshell::cwd", [
+    it("returns the current working directory", fn() {
+      let cwd =
+        gleamyshell.execute("pwd", [])
+        |> result.unwrap("")
+
+      gleamyshell.cwd()
+      |> expect.to_be_some()
+      |> expect.to_equal(cwd)
+    }),
   ])
 }

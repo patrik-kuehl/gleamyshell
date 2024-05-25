@@ -9,4 +9,11 @@ defmodule GleamyShell do
       _ -> {:error, {output, exit_code}}
     end
   end
+
+  def cwd() do
+    case File.cwd() do
+      {:ok, path} -> {:some, path}
+      {:error, _} -> :none
+    end
+  end
 end

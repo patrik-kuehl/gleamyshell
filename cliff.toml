@@ -3,6 +3,7 @@
 header = """
 # Changelog\n
 All notable changes to this project will be documented in this file.\n
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n
 """
 
 body = """
@@ -11,7 +12,7 @@ body = """
 {% else %}\
     ## Unreleased
 {% endif %}\
-{% for group, commits in commits | group_by(attribute="group") %}
+{% for group, commits in commits | filter(attribute="merge_commit", value=false) | group_by(attribute="group") %}
     ### {{ group | striptags | trim | upper_first }}
     {% for commit in commits %}
         - {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
@@ -34,7 +35,7 @@ filter_unconventional = true
 split_commits = false
 
 commit_parsers = [
-  { message = "^docs(changelog): update changelog", skip = true },
+  { message = "^docs\\(changelog\\): update changelog", skip = true },
   { message = "^feat", group = "<!-- 0 -->Features" },
   { message = "^fix", group = "<!-- 1 -->Bug Fixes" },
   { message = "^doc", group = "<!-- 3 -->Documentation" },
@@ -53,6 +54,5 @@ commit_parsers = [
 
 protect_breaking_commits = false
 filter_commits = true
-tag_pattern = "^v[0-9]+.[0-9]+.[0-9]+$"
 topo_order = false
-sort_commits = "oldest"
+sort_commits = "newest"

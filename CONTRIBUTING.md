@@ -53,7 +53,6 @@ You can refer to the [npm scripts](#npm-scripts) section to find out how to upda
 | :-----------------------------------: | :------: |
 |      [Gleam](https://gleam.run/)      | \>= 1.1  |
 |  [Elixir](https://elixir-lang.org/)   | \>= 1.12 |
-|        [Bun](https://bun.sh/)         | \>= 1.0  |
 |       [Deno](https://deno.com/)       | \>= 1.0  |
 |   [Node.js](https://nodejs.org/)\*    | \>= 20.0 |
 | [Docker](https://www.docker.com/)\*\* | \>= 24.0 |
@@ -63,8 +62,7 @@ You need to run `npm ci` to set up all required npm dependencies. This ensures
 [Husky](https://typicode.github.io/husky/) configures all Git hooks and that all npm scripts are executable.
 
 \* Although GleamyShell supports different JavaScript targets, Node.js will be required for local development to ensure
-the highest compatibility with the `package.json`. Other JavaScript runtimes like Bun and Deno are only required to
-execute tests.
+the highest compatibility with the `package.json`. Deno is only required for executing tests to ensure compatibility.
 
 \*\* act and Docker are optional but recommended because act enables you to run the GitHub workflows of this project
 locally via Docker before even pushing anything to GitHub.
@@ -79,6 +77,5 @@ locally via Docker before even pushing anything to GitHub.
 |  test-on-erlang  |             runs tests on the Erlang target             |
 |  test-on-nodejs  |            runs tests on the Node.js target             |
 |   test-on-deno   |              runs tests on the Deno target              |
-|   test-on-bun    |              runs tests on the Bun target               |
 | update-changelog |                  updates the changelog                  |
 | commit-changelog | commits the changelog using a predefined commit message |

@@ -4,13 +4,13 @@ import { Ok, Error } from "./gleam.mjs"
 import { Some, None } from "../gleam_stdlib/gleam/option.mjs"
 
 export function execute(command, args) {
-    const commandWithArgs = `${command} ${args.toArray().join(" ")}`
+    let result = {}
 
     try {
-        return new Ok(child_process.execSync(commandWithArgs).toString())
-    } catch (error) {
-        return new Error([errorOutputToString(error), error.status])
-    }
+        result = child_process.spawnSync(command, args.toArray())
+    } catch {}
+
+    return toResult(result)
 }
 
 export function cwd() {
@@ -21,14 +21,12 @@ export function cwd() {
     }
 }
 
-function errorOutputToString(error) {
-    if (error.stdout != null) {
-        return error.stdout.toString()
+function toResult(result) {
+    if (result?.status === 0) {
+        return new Ok(result.stdout?.toString() ?? "")
     }
 
-    if (error.stderr != null) {
-        return error.stderr.toString()
-    }
-
-    return ""
+    return result?.status == null
+        ? new Error([result.error?.code ?? "", new None()])
+        : new Error([result.stderr?.toString() ?? "", new Some(result.status)])
 }

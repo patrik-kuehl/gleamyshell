@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Features
 
+-   Handle abort reasons
 -   Implement Gleam cwd function
 -   Implement Elixir cwd function
 -   Implement JavaScript cwd function

@@ -1,12 +1,14 @@
 defmodule GleamyShell do
   def execute(command, args) do
-    command_with_args = "#{command} #{Enum.join(args, " ")}"
+    try do
+      {output, exit_code} = System.cmd(command, args, stderr_to_stdout: true)
 
-    {output, exit_code} = System.shell(command_with_args)
-
-    case exit_code do
-      0 -> {:ok, output}
-      _ -> {:error, {output, exit_code}}
+      case exit_code do
+        0 -> {:ok, output}
+        _ -> {:error, {output, {:some, exit_code}}}
+      end
+    rescue
+      error in ErlangError -> {:error, {error.original |> to_string(), :none}}
     end
   end
 

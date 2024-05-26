@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Features
 
+-   Implement execute_in function
+-   Introduce working directory parameter in execute FFI functions
 -   Handle abort reasons
 -   Implement Gleam cwd function
 -   Implement Elixir cwd function
@@ -15,6 +17,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 -   Implement Gleam execute function
 -   Implement Elixir execute function
 -   Implement JavaScript execute function
+
+### Refactor
+
+-   Return output without removing trimming whitespace
+-   Drop Bun support
 
 ### Miscellaneous Tasks
 

@@ -33,13 +33,7 @@ pub fn execute_in(
 }
 
 pub fn cwd() -> Option(String) {
-  case cwd_ffi() {
-    Some(path) ->
-      path
-      |> string.trim()
-      |> Some()
-    None -> None
-  }
+  cwd_ffi()
 }
 
 fn to_abort_reason(reason: String) -> AbortReason {
@@ -67,11 +61,9 @@ fn internal_execute(
   case execute_ffi(command, args, working_directory) {
     Ok(output) ->
       output
-      |> string.trim()
       |> Ok()
     Error(#(output, Some(exit_code))) ->
       output
-      |> string.trim()
       |> Failure(exit_code)
       |> Error()
     Error(#(reason, None)) ->

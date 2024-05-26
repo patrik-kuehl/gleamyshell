@@ -17,7 +17,7 @@ pub fn execute_tests() {
 
         gleamyshell.execute("echo", [output])
         |> expect.to_be_ok()
-        |> expect.to_equal(output)
+        |> expect.to_equal(output <> "\n")
       }),
     ]),
     describe("failed commands", [
@@ -77,7 +77,7 @@ pub fn execute_in_tests() {
 
         gleamyshell.execute_in("pwd", [], output)
         |> expect.to_be_ok()
-        |> expect.to_equal(output)
+        |> expect.to_equal(output <> "\n")
       }),
     ]),
     describe("failed commands", [
@@ -135,6 +135,7 @@ pub fn cwd_tests() {
       let cwd =
         gleamyshell.execute("pwd", [])
         |> result.unwrap("")
+        |> string.trim()
 
       gleamyshell.cwd()
       |> expect.to_be_some()

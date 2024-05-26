@@ -1,6 +1,8 @@
 import gleam/result
-import gleamyshell
+import gleam/string
+import gleamyshell.{Abort, Enoent, Failure}
 import startest.{describe, it}
+import startest/assertion_error.{AssertionError}
 import startest/expect
 
 pub fn main() {
@@ -22,7 +24,20 @@ pub fn execute_tests() {
       it("returns ENOENT error", fn() {
         gleamyshell.execute("_whoami_", [])
         |> expect.to_be_error()
-        |> expect.to_equal(gleamyshell.Abort(gleamyshell.Enoent))
+        |> expect.to_equal(Abort(Enoent))
+      }),
+      it("returns exit code 1", fn() {
+        let failure =
+          gleamyshell.execute("cat", ["_whoami_"])
+          |> expect.to_be_error()
+
+        case failure {
+          Failure(output, exit_code) -> {
+            expect.to_equal(exit_code, 1)
+            expect_to_contain(output, "No such file or directory")
+          }
+          _ -> panic
+        }
       }),
       it("returns exit code 127", fn() {
         let failure =
@@ -30,7 +45,23 @@ pub fn execute_tests() {
           |> expect.to_be_error()
 
         case failure {
-          gleamyshell.Failure(_, exit_code) -> expect.to_equal(exit_code, 127)
+          Failure(output, exit_code) -> {
+            expect.to_equal(exit_code, 127)
+            expect_to_contain(output, "not found")
+          }
+          _ -> panic
+        }
+      }),
+      it("returns exit code 126", fn() {
+        let failure =
+          gleamyshell.execute("/bin/sh", ["ls"])
+          |> expect.to_be_error()
+
+        case failure {
+          Failure(output, exit_code) -> {
+            expect.to_equal(exit_code, 126)
+            expect_to_contain(output, "cannot execute binary file")
+          }
           _ -> panic
         }
       }),
@@ -50,4 +81,22 @@ pub fn cwd_tests() {
       |> expect.to_equal(cwd)
     }),
   ])
+}
+
+fn expect_to_contain(does: String, contains: String) -> Nil {
+  case string.contains(does, contains) {
+    True -> Nil
+    False ->
+      AssertionError(
+        string.concat([
+          "Expected ",
+          string.inspect(does),
+          " to contain ",
+          string.inspect(contains),
+        ]),
+        string.inspect(does),
+        string.inspect(contains) <> " to be in",
+      )
+      |> assertion_error.raise()
+  }
 }

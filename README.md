@@ -15,6 +15,38 @@ You should use GleamyShell if
 -   you need or want to support multiple targets _and/or_
 -   synchronous shell command execution is not a concern.
 
+## Usage
+
+### Getting the current username
+
+```gleam
+let result = gleamyshell.execute("whoami", [])
+
+case result {
+  Ok(username) ->
+    io.println("Hello there, " <> string.trim(username) <> "!")
+  Error(Failure(output, exit_code)) ->
+    io.println(
+      "Whoops!\nError ("
+      <> int.to_string(exit_code)
+      <> "): "
+      <> string.trim(output),
+    )
+  Error(Abort(_)) -> io.println("Something went terribly wrong.")
+}
+```
+
+### Getting the current working directory
+
+```gleam
+case gleamyshell.cwd() {
+  Some(working_directory) ->
+    io.println("Current working directory: " <> working_directory)
+  None ->
+    io.println("Couldn't detect the current working directory.")
+}
+```
+
 ## Changelog
 
 Take a look at the [changelog](https://github.com/patrik-kuehl/gleamyshell/blob/main/CHANGELOG.md) to get an overview of

@@ -1,22 +1,56 @@
 import gleam/option.{type Option, None, Some}
 import gleam/string
 
+/// Represents information about why a command execution failed.
 pub type CommandError {
+  /// The command could be executed but returned a non-zero exit code.
   Failure(output: String, exit_code: Int)
+  /// The command did not execute and instead was aborted.
   Abort(reason: AbortReason)
 }
 
+/// Represents the reason why the execution of a command was aborted.
+///
+/// Most of these reasons are common POSIX errors.
 pub type AbortReason {
+  /// Not enough memory.
   Enomem
+  /// Resource temporarily unavailable.
   Eagain
+  /// Too long file name.
   Enametoolong
+  /// Too many open files.
   Emfile
+  /// File table overflow.
   Enfile
+  /// Insufficient permissions.
   Eacces
+  /// No such file or directory.
   Enoent
+  /// An error not represented by the other options.
   Other(String)
 }
 
+/// Executes the given command with arguments.
+///
+/// ## Example
+/// 
+/// ```gleam
+/// let result = gleamyshell.execute("whoami", [])
+/// 
+/// case result {
+///   Ok(username) -> io.println("Hello there, " <> string.trim(username) <> "!")
+///   Error(Failure(output, exit_code)) -> io.println("Whoops!\nError (" <> int.to_string(exit_code) <> "): " <> string.trim(output))
+///   Error(Abort(_)) -> io.println("Something went terribly wrong.")
+/// }
+/// ```
+/// 
+/// This function can also be invoked by using labelled arguments.
+/// 
+/// ```gleam
+/// let result = gleamyshell.execute("ls", args: ["-la"])
+/// let another_result = gleamyshell.execute(command: "ls", args: ["-la"])
+/// ```
 pub fn execute(
   command command: String,
   args args: List(String),
@@ -24,6 +58,26 @@ pub fn execute(
   internal_execute(command, args, None)
 }
 
+/// Executes the given command with arguments in a specified working directory.
+///
+/// ## Example
+/// 
+/// ```gleam
+/// let result = gleamyshell.execute_in("cat", [".bashrc"], "/home/username")
+/// 
+/// case result {
+///   Ok(file_content) -> io.println(file_content)
+///   Error(Failure(output, exit_code)) -> io.println("Whoops!\nError (" <> int.to_string(exit_code) <> "): " <> string.trim(output))
+///   Error(Abort(_)) -> io.println("Something went terribly wrong.")
+/// }
+/// ```
+/// 
+/// This function can also be invoked by using labelled arguments.
+/// 
+/// ```gleam
+/// let result = gleamyshell.execute_in("ls", args: ["-la"], working_directory: "/usr/bin")
+/// let another_result = gleamyshell.execute_in(command: "ls", args: ["-la"], working_directory: "/usr/bin")
+/// ```
 pub fn execute_in(
   command command: String,
   args args: List(String),
@@ -32,6 +86,18 @@ pub fn execute_in(
   internal_execute(command, args, Some(working_directory))
 }
 
+/// Returns the current working directory.
+/// 
+/// This function returns an `Option` because it can fail on Unix-like systems in rare circumstances.
+/// 
+/// ## Example
+/// 
+/// ```gleam
+/// case gleamyshell.cwd() {
+///   Some(working_directory) -> io.println("Current working directory: " <> working_directory)
+///   None -> io.println("Couldn't detect the current working directory.")
+/// }
+/// ```
 pub fn cwd() -> Option(String) {
   cwd_ffi()
 }

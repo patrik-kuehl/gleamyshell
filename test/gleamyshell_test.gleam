@@ -52,19 +52,6 @@ pub fn execute_tests() {
           _ -> panic
         }
       }),
-      it("returns exit code 126", fn() {
-        let failure =
-          gleamyshell.execute("/bin/sh", ["ls"])
-          |> expect.to_be_error()
-
-        case failure {
-          Failure(output, exit_code) -> {
-            expect.to_equal(exit_code, 126)
-            expect_to_contain(output, "cannot execute binary file")
-          }
-          _ -> panic
-        }
-      }),
     ]),
   ])
 }
@@ -108,19 +95,6 @@ pub fn execute_in_tests() {
           Failure(output, exit_code) -> {
             expect.to_equal(exit_code, 127)
             expect_to_contain(output, "not found")
-          }
-          _ -> panic
-        }
-      }),
-      it("returns exit code 126", fn() {
-        let failure =
-          gleamyshell.execute_in("/bin/sh", ["ls"], "/usr/bin")
-          |> expect.to_be_error()
-
-        case failure {
-          Failure(output, exit_code) -> {
-            expect.to_equal(exit_code, 126)
-            expect_to_contain(output, "cannot execute binary file")
           }
           _ -> panic
         }

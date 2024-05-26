@@ -69,6 +69,66 @@ pub fn execute_tests() {
   ])
 }
 
+pub fn execute_in_tests() {
+  describe("gleamyshell::execute_in", [
+    describe("succeeded commands", [
+      it("returns expected output", fn() {
+        let output = "/usr/bin"
+
+        gleamyshell.execute_in("pwd", [], output)
+        |> expect.to_be_ok()
+        |> expect.to_equal(output)
+      }),
+    ]),
+    describe("failed commands", [
+      it("returns ENOENT error", fn() {
+        gleamyshell.execute_in("_whoami_", [], "/usr/bin")
+        |> expect.to_be_error()
+        |> expect.to_equal(Abort(Enoent))
+      }),
+      it("returns exit code 1", fn() {
+        let failure =
+          gleamyshell.execute_in("cat", ["_whoami_"], "/usr/bin")
+          |> expect.to_be_error()
+
+        case failure {
+          Failure(output, exit_code) -> {
+            expect.to_equal(exit_code, 1)
+            expect_to_contain(output, "No such file or directory")
+          }
+          _ -> panic
+        }
+      }),
+      it("returns exit code 127", fn() {
+        let failure =
+          gleamyshell.execute_in("/bin/sh", ["-c", "_whoami_"], "/usr/bin")
+          |> expect.to_be_error()
+
+        case failure {
+          Failure(output, exit_code) -> {
+            expect.to_equal(exit_code, 127)
+            expect_to_contain(output, "not found")
+          }
+          _ -> panic
+        }
+      }),
+      it("returns exit code 126", fn() {
+        let failure =
+          gleamyshell.execute_in("/bin/sh", ["ls"], "/usr/bin")
+          |> expect.to_be_error()
+
+        case failure {
+          Failure(output, exit_code) -> {
+            expect.to_equal(exit_code, 126)
+            expect_to_contain(output, "cannot execute binary file")
+          }
+          _ -> panic
+        }
+      }),
+    ]),
+  ])
+}
+
 pub fn cwd_tests() {
   describe("gleamyshell::cwd", [
     it("returns the current working directory", fn() {

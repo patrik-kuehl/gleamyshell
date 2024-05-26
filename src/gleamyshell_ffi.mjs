@@ -1,13 +1,15 @@
 import child_process from "node:child_process"
 import process from "node:process"
 import { Ok, Error } from "./gleam.mjs"
-import { Some, None } from "../gleam_stdlib/gleam/option.mjs"
+import { Some, None, is_some, unwrap } from "../gleam_stdlib/gleam/option.mjs"
 
-export function execute(command, args) {
+export function execute(command, args, workingDirectory) {
+    const options = is_some(workingDirectory) ? { cwd: unwrap(workingDirectory) } : {}
+
     let result = {}
 
     try {
-        result = child_process.spawnSync(command, args.toArray())
+        result = child_process.spawnSync(command, args.toArray(), options)
     } catch {}
 
     return toResult(result)

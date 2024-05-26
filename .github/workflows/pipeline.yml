@@ -58,4 +58,6 @@ jobs:
           elixir-version: ${{ env.CI_ELIXIR_VERSION }}
           rebar3-version: ${{ env.CI_REBAR3_VERSION }}
       - name: Publish Hex package
+        env:
+          HEXPM_API_KEY: ${{ secrets.HEXPM_API_KEY }}
         run: gleam publish -y

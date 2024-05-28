@@ -28,7 +28,31 @@ pub type AbortReason {
   /// No such file or directory.
   Enoent
   /// An error not represented by the other options.
-  Other(String)
+  OtherAbortReason(String)
+}
+
+/// Represents families of operating systems.
+pub type OsFamily {
+  /// The operating system is part of the Unix family.
+  Unix(Os)
+  /// The operating system is part of the Windows family.
+  Windows
+}
+
+/// Represents names of operating systems.
+pub type Os {
+  /// The Unix operating system used by Apple as a core for its operating systems (e.g., macOS).
+  Darwin
+  /// A free Unix-like operating system descended from AT&T's UNIX.
+  FreeBsd
+  /// A free Unix-like operating system forked from NetBSD.
+  OpenBsd
+  /// The Linux kernel is the base for many Unix-like operating systems like Debian.
+  Linux
+  /// The Unix-like operating system SunOS is used as a core for other distributions like Solaris.
+  SunOs
+  /// An operating system not represented by the other options.
+  OtherOs(String)
 }
 
 /// Executes the given command with arguments.

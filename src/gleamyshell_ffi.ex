@@ -14,7 +14,7 @@ defmodule GleamyShell do
         _ -> {:error, {output, {:some, exit_code}}}
       end
     rescue
-      error in ErlangError -> {:error, {error.original |> to_string(), :none}}
+      error in ErlangError -> {:error, {to_string(error.original), :none}}
     end
   end
 
@@ -22,6 +22,13 @@ defmodule GleamyShell do
     case File.cwd() do
       {:ok, path} -> {:some, path}
       {:error, _} -> :none
+    end
+  end
+
+  def os() do
+    case :os.type() do
+      {:win32, _} -> {"win32", ""}
+      {:unix, operating_system} -> {"unix", to_string(operating_system)}
     end
   end
 end

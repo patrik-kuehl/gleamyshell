@@ -152,6 +152,26 @@ pub fn cwd() -> Option(String) {
   cwd_ffi()
 }
 
+/// Returns information about the host's operating system.
+/// 
+/// This function is meant to be a quality-of-life feature where someone needs to execute different
+/// shell commands that differ depending on the operating system.
+/// 
+/// ## Example
+/// 
+/// ```gleam
+/// case gleamyshell.os() {
+///   Windows -> io.println("Doing stuff on Windows.")
+///   Unix(_) -> io.println("Doing stuff on a Unix(-like) system.")
+/// }
+/// ```
+pub fn os() -> OsFamily {
+  case os_ffi() {
+    #("win32", _) -> Windows
+    #(_, os) -> Unix(to_operating_system(os))
+  }
+}
+
 fn to_abort_reason(reason: String) -> AbortReason {
   case
     reason
@@ -165,7 +185,7 @@ fn to_abort_reason(reason: String) -> AbortReason {
     "enfile" -> Enfile
     "eacces" -> Eacces
     "enoent" -> Enoent
-    value -> Other(value)
+    error -> OtherAbortReason(error)
   }
 }
 
@@ -175,9 +195,7 @@ fn internal_execute(
   working_directory: Option(String),
 ) -> Result(String, CommandError) {
   case execute_ffi(command, args, working_directory) {
-    Ok(output) ->
-      output
-      |> Ok()
+    Ok(output) -> Ok(output)
     Error(#(output, Some(exit_code))) ->
       output
       |> Failure(exit_code)
@@ -187,6 +205,21 @@ fn internal_execute(
       |> to_abort_reason()
       |> Abort()
       |> Error()
+  }
+}
+
+fn to_operating_system(os: String) -> Os {
+  case
+    os
+    |> string.trim()
+    |> string.lowercase()
+  {
+    "darwin" -> Darwin
+    "freebsd" -> FreeBsd
+    "openbsd" -> OpenBsd
+    "linux" -> Linux
+    "sunos" -> SunOs
+    name -> OtherOs(name)
   }
 }
 
@@ -201,3 +234,7 @@ fn execute_ffi(
 @external(erlang, "Elixir.GleamyShell", "cwd")
 @external(javascript, "./gleamyshell_ffi.mjs", "cwd")
 fn cwd_ffi() -> Option(String)
+
+@external(erlang, "Elixir.GleamyShell", "os")
+@external(javascript, "./gleamyshell_ffi.mjs", "os")
+fn os_ffi() -> #(String, String)

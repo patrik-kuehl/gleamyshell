@@ -1,6 +1,6 @@
 import gleam/result
 import gleam/string
-import gleamyshell.{Abort, Enoent, Failure}
+import gleamyshell.{Abort, Enoent, Failure, Unix}
 import startest.{describe, it}
 import startest/assertion_error.{AssertionError}
 import startest/expect
@@ -114,6 +114,19 @@ pub fn cwd_tests() {
       gleamyshell.cwd()
       |> expect.to_be_some()
       |> expect.to_equal(cwd)
+    }),
+  ])
+}
+
+pub fn os_tests() {
+  describe("gleamyshell::os", [
+    it("returns the current operating system", fn() {
+      let os = gleamyshell.os()
+
+      case os {
+        Unix(_) -> Nil
+        _ -> panic as "Expected a Unix operating system."
+      }
     }),
   ])
 }

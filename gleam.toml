@@ -15,6 +15,7 @@ pages = [
 allow_read = true
 allow_env = true
 allow_run = true
+allow_sys = true
 
 [dependencies]
 gleam_stdlib = "0.37.0"

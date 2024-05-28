@@ -148,9 +148,9 @@ pub fn execute_in(
 ///   None -> io.println("Couldn't detect the current working directory.")
 /// }
 /// ```
-pub fn cwd() -> Option(String) {
-  cwd_ffi()
-}
+@external(erlang, "Elixir.GleamyShell", "cwd")
+@external(javascript, "./gleamyshell_ffi.mjs", "cwd")
+pub fn cwd() -> Option(String)
 
 /// Returns information about the host's operating system.
 /// 
@@ -171,6 +171,23 @@ pub fn os() -> OsFamily {
     #(_, os) -> Unix(to_operating_system(os))
   }
 }
+
+/// Returns the home directory of the current user.
+/// 
+/// This function returns an `Option` because it can fail in rare circumstances.
+/// 
+/// ## Example
+/// 
+/// ```gleam
+/// case gleamyshell.home_directory() {
+///   Some(home_directory) -> io.println("Home directory: " <> home_directory)
+///   None ->
+///     io.println("Couldn't detect the home directory of the current user.")
+/// }
+/// ```
+@external(erlang, "Elixir.GleamyShell", "home_directory")
+@external(javascript, "./gleamyshell_ffi.mjs", "home_directory")
+pub fn home_directory() -> Option(String)
 
 fn to_abort_reason(reason: String) -> AbortReason {
   case
@@ -230,10 +247,6 @@ fn execute_ffi(
   args: List(String),
   working_directory: Option(String),
 ) -> Result(String, #(String, Option(Int)))
-
-@external(erlang, "Elixir.GleamyShell", "cwd")
-@external(javascript, "./gleamyshell_ffi.mjs", "cwd")
-fn cwd_ffi() -> Option(String)
 
 @external(erlang, "Elixir.GleamyShell", "os")
 @external(javascript, "./gleamyshell_ffi.mjs", "os")

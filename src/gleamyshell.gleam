@@ -39,8 +39,15 @@ pub type AbortReason {
 /// let result = gleamyshell.execute("whoami", [])
 /// 
 /// case result {
-///   Ok(username) -> io.println("Hello there, " <> string.trim(username) <> "!")
-///   Error(Failure(output, exit_code)) -> io.println("Whoops!\nError (" <> int.to_string(exit_code) <> "): " <> string.trim(output))
+///   Ok(username) ->
+///     io.println("Hello there, " <> string.trim(username) <> "!")
+///   Error(Failure(output, exit_code)) ->
+///     io.println(
+///       "Whoops!\nError ("
+///       <> int.to_string(exit_code)
+///       <> "): "
+///       <> string.trim(output),
+///     )
 ///   Error(Abort(_)) -> io.println("Something went terribly wrong.")
 /// }
 /// ```
@@ -63,11 +70,18 @@ pub fn execute(
 /// ## Example
 /// 
 /// ```gleam
-/// let result = gleamyshell.execute_in("cat", [".bashrc"], "/home/username")
+/// let result =
+///   gleamyshell.execute_in("cat", [".bashrc"], "/home/username")
 /// 
 /// case result {
 ///   Ok(file_content) -> io.println(file_content)
-///   Error(Failure(output, exit_code)) -> io.println("Whoops!\nError (" <> int.to_string(exit_code) <> "): " <> string.trim(output))
+///   Error(Failure(output, exit_code)) ->
+///     io.println(
+///       "Whoops!\nError ("
+///       <> int.to_string(exit_code)
+///       <> "): "
+///       <> string.trim(output),
+///     )
 ///   Error(Abort(_)) -> io.println("Something went terribly wrong.")
 /// }
 /// ```
@@ -75,8 +89,19 @@ pub fn execute(
 /// This function can also be invoked by using labelled arguments.
 /// 
 /// ```gleam
-/// let result = gleamyshell.execute_in("ls", args: ["-la"], working_directory: "/usr/bin")
-/// let another_result = gleamyshell.execute_in(command: "ls", args: ["-la"], working_directory: "/usr/bin")
+/// let result =
+///   gleamyshell.execute_in(
+///     "ls",
+///     args: ["-la"],
+///     working_directory: "/usr/bin",
+///   )
+/// 
+/// let another_result =
+///   gleamyshell.execute_in(
+///     command: "ls",
+///     args: ["-la"],
+///     working_directory: "/usr/bin",
+///   )
 /// ```
 pub fn execute_in(
   command command: String,
@@ -94,7 +119,8 @@ pub fn execute_in(
 /// 
 /// ```gleam
 /// case gleamyshell.cwd() {
-///   Some(working_directory) -> io.println("Current working directory: " <> working_directory)
+///   Some(working_directory) ->
+///     io.println("Current working directory: " <> working_directory)
 ///   None -> io.println("Couldn't detect the current working directory.")
 /// }
 /// ```

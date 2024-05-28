@@ -131,19 +131,19 @@ pub fn os_tests() {
   ])
 }
 
-fn expect_to_contain(does: String, contains: String) -> Nil {
-  case string.contains(does, contains) {
+fn expect_to_contain(haystack: String, needle: String) -> Nil {
+  case string.contains(haystack, needle) {
     True -> Nil
     False ->
       AssertionError(
         string.concat([
           "Expected ",
-          string.inspect(does),
+          string.inspect(haystack),
           " to contain ",
-          string.inspect(contains),
+          string.inspect(needle),
         ]),
-        string.inspect(does),
-        string.inspect(contains) <> " to be in",
+        string.inspect(haystack),
+        string.inspect(needle) <> " to be in",
       )
       |> assertion_error.raise()
   }

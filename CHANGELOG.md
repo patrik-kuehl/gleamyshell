@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2024-05-28
+
+### Features
+
+-   Implement Gleam os function
+-   [**breaking**] Define OsFamily and Os types and rename constructor
+-   Implement JavaScript os function
+-   Implement Elixir os function
+
 ## 0.1.0 - 2024-05-26
 
 ### Features

@@ -6,14 +6,16 @@ and Node.js).
 ## When to use GleamyShell?
 
 GleamyShell provides the ability to execute shell commands on multiple targets. While this might sound amazing,
-supporting targets with fundamentally different concurrency models shrinks the common ground significantly.
+supporting targets with fundamentally different concurrency models and APIs shrinks the common ground significantly.
 
-In order to keep the public API homogenous across different targets, GleamyShell only provides synchronous bindings.
+In order to keep the public API homogenous across different targets, GleamyShell only provides synchronous bindings and
+a minimal API with common functionalities supported by those targets.
 
 You should use GleamyShell if
 
 -   you need or want to support multiple targets _and/or_
--   synchronous shell command execution is not a concern.
+-   synchronous shell command execution is not a concern _and/or_
+-   you don't have special use cases that GleamyShell's API cannot serve.
 
 ## Usage
 

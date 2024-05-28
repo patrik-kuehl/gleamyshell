@@ -1,6 +1,6 @@
 import gleam/result
 import gleam/string
-import gleamyshell.{Abort, Enoent, Failure, Unix}
+import gleamyshell.{type CommandError, Abort, Enoent, Failure, Unix}
 import startest.{describe, it}
 import startest/assertion_error.{AssertionError}
 import startest/expect
@@ -121,12 +121,25 @@ pub fn cwd_tests() {
 pub fn os_tests() {
   describe("gleamyshell::os", [
     it("returns the current operating system", fn() {
-      let os = gleamyshell.os()
-
-      case os {
+      case gleamyshell.os() {
         Unix(_) -> Nil
         _ -> panic as "Expected a Unix operating system."
       }
+    }),
+  ])
+}
+
+pub fn home_directory_tests() {
+  describe("gleamyshell::home_directory", [
+    it("returns the home directory of the current user", fn() {
+      let home_directory =
+        execute_test_script("home_directory.sh")
+        |> result.unwrap("")
+        |> string.trim()
+
+      gleamyshell.home_directory()
+      |> expect.to_be_some()
+      |> expect.to_equal(home_directory)
     }),
   ])
 }
@@ -147,4 +160,8 @@ fn expect_to_contain(haystack: String, needle: String) -> Nil {
       )
       |> assertion_error.raise()
   }
+}
+
+fn execute_test_script(file: String) -> Result(String, CommandError) {
+  gleamyshell.execute("sh", ["test/scripts/" <> file])
 }

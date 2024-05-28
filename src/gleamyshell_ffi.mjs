@@ -1,5 +1,6 @@
 import child_process from "node:child_process"
 import process from "node:process"
+import { default as operating_system } from "node:os"
 import { Ok, Error } from "./gleam.mjs"
 import { Some, None, is_some, unwrap } from "../gleam_stdlib/gleam/option.mjs"
 
@@ -27,6 +28,14 @@ export function os() {
     const operatingSystem = process.platform
 
     return operatingSystem === "win32" ? [operatingSystem, ""] : ["unix", operatingSystem]
+}
+
+export function home_directory() {
+    try {
+        return new Some(operating_system.homedir())
+    } catch {
+        return new None()
+    }
 }
 
 function toResult(result) {

@@ -23,6 +23,12 @@ export function cwd() {
     }
 }
 
+export function os() {
+    const operatingSystem = process.platform
+
+    return operatingSystem === "win32" ? [operatingSystem, ""] : ["unix", operatingSystem]
+}
+
 function toResult(result) {
     if (result?.status === 0) {
         return new Ok(result.stdout?.toString() ?? "")

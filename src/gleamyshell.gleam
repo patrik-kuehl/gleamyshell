@@ -150,8 +150,7 @@ pub fn execute_in(
 /// ```
 pub fn cwd() -> Option(String) {
   case cwd_ffi() {
-    Some(working_directory) ->
-      working_directory |> sanitize_cwd_on_windows() |> Some()
+    Some(working_directory) -> working_directory |> string.trim() |> Some()
     None -> None
   }
 }
@@ -241,16 +240,6 @@ fn to_operating_system(os: String) -> Os {
     "linux" -> Linux
     "sunos" -> SunOs
     name -> OtherOs(name)
-  }
-}
-
-fn sanitize_cwd_on_windows(working_directory: String) -> String {
-  case os() {
-    Unix(_) -> working_directory
-    Windows ->
-      working_directory
-      |> string.replace("c:/", "C:\\")
-      |> string.replace("/", "\\")
   }
 }
 

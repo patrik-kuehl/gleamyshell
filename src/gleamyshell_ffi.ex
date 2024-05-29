@@ -19,9 +19,19 @@ defmodule GleamyShell do
   end
 
   def cwd() do
-    case File.cwd() do
-      {:ok, path} -> {:some, path}
-      {:error, _} -> :none
+    try do
+      result =
+        case :os.type() do
+          {:win32, _} -> System.cmd("powershell", ["$pwd.Path"])
+          {:unix, _} -> System.cmd("sh", ["-c", "pwd"])
+        end
+
+      case result do
+        {dir, 0} -> {:some, dir}
+        _ -> :none
+      end
+    rescue
+      _ -> :none
     end
   end
 

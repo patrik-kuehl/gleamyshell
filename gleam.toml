@@ -1,9 +1,9 @@
 name = "gleamyshell"
-version = "0.2.0"
+version = "0.3.0"
 description = "A cross-platform Gleam library for executing shell commands."
 licences = ["MIT"]
 repository = { type = "github", user = "patrik-kuehl", repo = "gleamyshell" }
-gleam = ">= 1.1.0"
+gleam = ">= 1.1.0 and < 2.0.0"
 
 [documentation]
 pages = [
@@ -21,4 +21,4 @@ allow_sys = true
 gleam_stdlib = ">= 0.37.0"
 
 [dev-dependencies]
-startest = "0.2.4"
+startest = ">= 0.2.4"

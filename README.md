@@ -14,8 +14,12 @@ a minimal API with common functionalities supported by those targets.
 You should use GleamyShell if
 
 -   you need or want to support multiple targets _and/or_
--   synchronous shell command execution is not a concern _and/or_
--   you don't have special use cases that GleamyShell's API cannot serve.
+-   synchronous shell command execution is not a concern _and most importantly_
+-   you don't have special use cases that GleamyShell's API cannot serve\*.
+
+\* Feel free to [open an issue](https://github.com/patrik-kuehl/gleamyshell/issues) on GitHub to discuss your feature
+request. GleamyShell only implements features that can provide the same behavior on all supported targets. Yours might
+be one of them.
 
 ## Usage
 
@@ -46,6 +50,16 @@ case gleamyshell.cwd() {
     io.println("Current working directory: " <> working_directory)
   None ->
     io.println("Couldn't detect the current working directory.")
+}
+```
+
+### Choosing what to do depending operating system
+
+```gleam
+case gleamyshell.os() {
+  Windows -> io.println("Doing stuff on Windows.")
+  Unix(Darwin) -> io.println("Doing stuff on macOS.")
+  Unix(_) -> io.println("Doing stuff on a Unix(-like) system.")
 }
 ```
 

@@ -253,7 +253,7 @@ fn execute_ffi(
 
 @external(erlang, "Elixir.GleamyShell", "cwd")
 @external(javascript, "./gleamyshell_ffi.mjs", "cwd")
-pub fn cwd_ffi() -> Option(String)
+fn cwd_ffi() -> Option(String)
 
 @external(erlang, "Elixir.GleamyShell", "os")
 @external(javascript, "./gleamyshell_ffi.mjs", "os")

@@ -53,7 +53,7 @@ case gleamyshell.cwd() {
 }
 ```
 
-### Choosing what to do depending operating system
+### Choosing what to do depending on the operating system
 
 ```gleam
 case gleamyshell.os() {

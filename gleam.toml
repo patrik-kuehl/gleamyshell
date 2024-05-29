@@ -3,7 +3,7 @@ version = "0.2.0"
 description = "A cross-platform Gleam library for executing shell commands."
 licences = ["MIT"]
 repository = { type = "github", user = "patrik-kuehl", repo = "gleamyshell" }
-gleam = ">= 1.1.0"
+gleam = ">= 1.1.0 and < 2.0.0"
 
 [documentation]
 pages = [

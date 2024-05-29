@@ -148,9 +148,13 @@ pub fn execute_in(
 ///   None -> io.println("Couldn't detect the current working directory.")
 /// }
 /// ```
-@external(erlang, "Elixir.GleamyShell", "cwd")
-@external(javascript, "./gleamyshell_ffi.mjs", "cwd")
-pub fn cwd() -> Option(String)
+pub fn cwd() -> Option(String) {
+  case cwd_ffi() {
+    Some(working_directory) ->
+      working_directory |> sanitize_cwd_on_windows() |> Some()
+    None -> None
+  }
+}
 
 /// Returns information about the host's operating system.
 /// 
@@ -240,6 +244,16 @@ fn to_operating_system(os: String) -> Os {
   }
 }
 
+fn sanitize_cwd_on_windows(working_directory: String) -> String {
+  case os() {
+    Unix(_) -> working_directory
+    Windows ->
+      working_directory
+      |> string.replace("c:/", "C:\\")
+      |> string.replace("/", "\\")
+  }
+}
+
 @external(erlang, "Elixir.GleamyShell", "execute")
 @external(javascript, "./gleamyshell_ffi.mjs", "execute")
 fn execute_ffi(
@@ -247,6 +261,10 @@ fn execute_ffi(
   args: List(String),
   working_directory: Option(String),
 ) -> Result(String, #(String, Option(Int)))
+
+@external(erlang, "Elixir.GleamyShell", "cwd")
+@external(javascript, "./gleamyshell_ffi.mjs", "cwd")
+pub fn cwd_ffi() -> Option(String)
 
 @external(erlang, "Elixir.GleamyShell", "os")
 @external(javascript, "./gleamyshell_ffi.mjs", "os")

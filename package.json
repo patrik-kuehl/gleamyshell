@@ -2,9 +2,9 @@
     "private": true,
     "scripts": {
         "format": "prettier --write . && mix format && gleam format",
-        "test-on-erlang": "echo 'Executing tests on Erlang runtime ...\n' && gleam test",
-        "test-on-nodejs": "echo 'Executing tests on Node.js runtime ...\n' && gleam test --target javascript",
-        "test-on-deno": "echo 'Executing tests on Deno runtime ...\n' && gleam test --target javascript --runtime deno",
+        "test-on-erlang": "gleam test",
+        "test-on-nodejs": "gleam test --target javascript",
+        "test-on-deno": "gleam test --target javascript --runtime deno",
         "test": "npm run test-on-erlang && npm run test-on-nodejs && npm run test-on-deno",
         "check": "prettier --check . && mix format --check-formatted && gleam format --check src test",
         "update-changelog": "git-cliff --unreleased --prepend CHANGELOG.md",

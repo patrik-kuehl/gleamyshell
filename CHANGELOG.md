@@ -12,8 +12,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Bug Fixes
 
--   [**breaking**] The `cwd` function now sanitizes the path on Windows to guarantee a consistent output across all
-    supported targets.
+-   [**breaking**] The `cwd` function now provides a consistent output across all supported targets.
+-   Removed the freezing of the standard library version for consumers of the library. Discovered and fixed thanks to
+    the GitHub user [darky](https://github.com/darky).
 
 ## 0.2.0 - 2024-05-28
 

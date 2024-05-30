@@ -188,7 +188,7 @@ pub fn os() -> OsFamily
 ///     io.println("Couldn't detect the home directory of the current user.")
 /// }
 /// ```
-@external(erlang, "Elixir.GleamyShell", "home_directory")
+@external(erlang, "gleamyshell_ffi", "home_directory")
 @external(javascript, "./gleamyshell_ffi.mjs", "home_directory")
 pub fn home_directory() -> Option(String)
 

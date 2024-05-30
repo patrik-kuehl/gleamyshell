@@ -1,5 +1,5 @@
 -module(gleamyshell_ffi).
--export([os/0]).
+-export([os/0, home_directory/0]).
 
 os() ->
     case os:type() of
@@ -10,4 +10,10 @@ os() ->
         {unix, linux} -> {unix, linux};
         {unix, sunos} -> {unix, sun_os};
         {_, OperatingSystem} -> {unix, {other_os, atom_to_binary(OperatingSystem, utf8)}}
+    end.
+
+home_directory() ->
+    case init:get_argument(home) of
+        {ok, [[Dir] | _]} -> {some, unicode:characters_to_binary(Dir, utf8)};
+        _ -> none
     end.

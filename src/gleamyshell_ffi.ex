@@ -17,21 +17,4 @@ defmodule GleamyShell do
       error in ErlangError -> {:error, {to_string(error.original), :none}}
     end
   end
-
-  def cwd() do
-    try do
-      result =
-        case :os.type() do
-          {:win32, _} -> System.cmd("powershell", ["$pwd.Path"])
-          {:unix, _} -> System.cmd("sh", ["-c", "pwd"])
-        end
-
-      case result do
-        {dir, 0} -> {:some, dir}
-        _ -> :none
-      end
-    rescue
-      _ -> :none
-    end
-  end
 end

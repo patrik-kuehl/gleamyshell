@@ -34,11 +34,4 @@ defmodule GleamyShell do
       _ -> :none
     end
   end
-
-  def home_directory() do
-    case System.user_home() do
-      nil -> :none
-      dir -> {:some, dir}
-    end
-  end
 end

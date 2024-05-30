@@ -27,7 +27,9 @@ pub fn execute_tests() {
 
       case failure {
         Failure(output, _) ->
-          output |> string.trim() |> expect.to_equal("Nothing to worry about.")
+          output
+          |> string.trim()
+          |> expect.to_equal("Nothing to worry about.")
         _ -> panic as "Did not expect the command to abort."
       }
     }),
@@ -54,7 +56,9 @@ pub fn execute_in_tests() {
 
       case failure {
         Failure(output, _) ->
-          output |> string.trim() |> expect.to_equal("Nothing to worry about.")
+          output
+          |> string.trim()
+          |> expect.to_equal("Nothing to worry about.")
         _ -> panic as "Did not expect the command to abort."
       }
     }),

@@ -3,6 +3,7 @@ import process from "node:process"
 import { default as operating_system } from "node:os"
 import { Ok, Error } from "./gleam.mjs"
 import { Some, None, is_some, unwrap } from "../gleam_stdlib/gleam/option.mjs"
+import { Windows, Unix, Darwin, FreeBsd, OpenBsd, Linux, SunOs, OtherOs } from "./gleamyshell.mjs"
 
 export function execute(command, args, workingDirectory) {
     const options = is_some(workingDirectory) ? { cwd: unwrap(workingDirectory) } : {}
@@ -27,7 +28,22 @@ export function cwd() {
 export function os() {
     const operatingSystem = process.platform
 
-    return operatingSystem === "win32" ? [operatingSystem, ""] : ["unix", operatingSystem]
+    switch (operatingSystem) {
+        case "win32":
+            return new Windows()
+        case "darwin":
+            return new Unix(new Darwin())
+        case "freebsd":
+            return new Unix(new FreeBsd())
+        case "openbsd":
+            return new Unix(new OpenBsd())
+        case "linux":
+            return new Unix(new Linux())
+        case "sunos":
+            return new Unix(new SunOs())
+        default:
+            return new Unix(new OtherOs(operatingSystem))
+    }
 }
 
 export function home_directory() {

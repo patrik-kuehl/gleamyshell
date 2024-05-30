@@ -35,13 +35,6 @@ defmodule GleamyShell do
     end
   end
 
-  def os() do
-    case :os.type() do
-      {:win32, _} -> {"win32", ""}
-      {:unix, operating_system} -> {"unix", to_string(operating_system)}
-    end
-  end
-
   def home_directory() do
     case System.user_home() do
       nil -> :none

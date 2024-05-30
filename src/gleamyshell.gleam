@@ -150,7 +150,10 @@ pub fn execute_in(
 /// ```
 pub fn cwd() -> Option(String) {
   case cwd_ffi() {
-    Some(working_directory) -> working_directory |> string.trim() |> Some()
+    Some(working_directory) ->
+      working_directory
+      |> string.trim()
+      |> Some()
     None -> None
   }
 }
@@ -168,12 +171,9 @@ pub fn cwd() -> Option(String) {
 ///   Unix(_) -> io.println("Doing stuff on a Unix(-like) system.")
 /// }
 /// ```
-pub fn os() -> OsFamily {
-  case os_ffi() {
-    #("win32", _) -> Windows
-    #(_, os) -> Unix(to_operating_system(os))
-  }
-}
+@external(erlang, "gleamyshell_ffi", "os")
+@external(javascript, "./gleamyshell_ffi.mjs", "os")
+pub fn os() -> OsFamily
 
 /// Returns the home directory of the current user.
 /// 
@@ -228,21 +228,6 @@ fn internal_execute(
   }
 }
 
-fn to_operating_system(os: String) -> Os {
-  case
-    os
-    |> string.trim()
-    |> string.lowercase()
-  {
-    "darwin" -> Darwin
-    "freebsd" -> FreeBsd
-    "openbsd" -> OpenBsd
-    "linux" -> Linux
-    "sunos" -> SunOs
-    name -> OtherOs(name)
-  }
-}
-
 @external(erlang, "Elixir.GleamyShell", "execute")
 @external(javascript, "./gleamyshell_ffi.mjs", "execute")
 fn execute_ffi(
@@ -254,7 +239,3 @@ fn execute_ffi(
 @external(erlang, "Elixir.GleamyShell", "cwd")
 @external(javascript, "./gleamyshell_ffi.mjs", "cwd")
 fn cwd_ffi() -> Option(String)
-
-@external(erlang, "Elixir.GleamyShell", "os")
-@external(javascript, "./gleamyshell_ffi.mjs", "os")
-fn os_ffi() -> #(String, String)

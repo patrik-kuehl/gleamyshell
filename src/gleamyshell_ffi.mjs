@@ -1,7 +1,7 @@
 import child_process from "node:child_process"
 import process from "node:process"
 import { default as operating_system } from "node:os"
-import { Ok, Error } from "./gleam.mjs"
+import { Ok, Error, isEqual } from "./gleam.mjs"
 import { Some, None, is_some, unwrap } from "../gleam_stdlib/gleam/option.mjs"
 import { Windows, Unix, Darwin, FreeBsd, OpenBsd, Linux, SunOs, OtherOs } from "./gleamyshell.mjs"
 
@@ -58,6 +58,22 @@ export function env(identifier) {
     const value = process.env[identifier]
 
     return value == null ? new None() : new Some(value)
+}
+
+export function which(executable) {
+    let result = {}
+
+    try {
+        if (isEqual(os(), new Windows())) {
+            result = child_process.spawnSync("powershell", [`(gcm ${executable}).Path`])
+        } else {
+            result = child_process.spawnSync("which", [executable])
+        }
+    } catch {}
+
+    return result?.status === 0 && result.stdout != null && result.stdout.toString().trim() !== ""
+        ? new Some(result.stdout.toString().trim())
+        : new None()
 }
 
 function toResult(result) {

@@ -1,12 +1,12 @@
 -module(gleamyshell_ffi).
--export([cwd/0, os/0, home_directory/0, env/1]).
+-export([cwd/0, os/0, home_directory/0, env/1, which/1]).
 
 cwd() ->
     try
         {ok, Cwd} = file:get_cwd(),
 
         case os() of
-            windows -> {some, sanitize_cwd_on_windows(Cwd)};
+            windows -> {some, sanitize_path_on_windows(Cwd)};
             _ -> {some, unicode:characters_to_binary(Cwd, utf8)}
         end
     catch
@@ -36,13 +36,20 @@ env(Identifier) ->
         Value -> {some, unicode:characters_to_binary(Value, utf8)}
     end.
 
-% Erlang's file:get_cwd/0 function returns a POSIX-style path, even on Windows.
-% To keep the return value consistent with Node.js' os:homedir/0 function and thus
-% also consistent with all supported targets, some sanitization needs to be done.
-sanitize_cwd_on_windows(Cwd) ->
-    DirWithSanitizedDrive = case re:split(Cwd, "^([a-zA-Z0-9]*):", [{return, list}]) of
+which(Executable) ->
+    case {os(), os:find_executable(binary_to_list(Executable))} of
+        {_, false} -> none;
+        {{unix, _}, Dir} -> {some, unicode:characters_to_binary(Dir, utf8)};
+        {windows, Dir} -> {some, sanitize_path_on_windows(Dir)}
+    end.
+
+% Erlang's file:get_cwd/0 and os:find_executable/1 functions return a POSIX-style path,
+% even on Windows. To keep the return value consistent with the Node.js FFI implementation
+% and thus also consistent with all supported targets, some sanitization needs to be done.
+sanitize_path_on_windows(Path) ->
+    PathWithSanitizedDrive = case re:split(Path, "^([a-zA-Z0-9]*):", [{return, list}]) of
         [_, Drive, RemainingPath] -> [string:to_upper(Drive), ":" | RemainingPath];
         [RemainingPath] -> RemainingPath
     end,
 
-    unicode:characters_to_binary(string:replace(DirWithSanitizedDrive, "/", "\\", all), utf8).
+    unicode:characters_to_binary(string:replace(PathWithSanitizedDrive, "/", "\\", all), utf8).

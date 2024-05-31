@@ -1,0 +1,1 @@
+echo (gcm cmd).Path

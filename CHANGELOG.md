@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.4.0 - 2024-05-31
+
+### Features
+
+-   Implemented the `env` function.
+-   Implemented the `which` function.
+
 ## 0.3.1 - 2024-05-29
 
 ### Bug Fixes
@@ -20,7 +27,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 -   [**breaking**] The `cwd` function now provides a consistent output across all supported targets.
 -   Removed the freezing of the standard library version for consumers of the library. Discovered and fixed thanks to
-    the GitHub user [darky](https://github.com/darky).
+    [@darky](https://github.com/darky).
 
 ## 0.2.0 - 2024-05-28
 

@@ -97,20 +97,51 @@ pub fn home_directory_tests() {
 
 pub fn env_tests() {
   describe("gleamyshell/env", [
-    it("returns the value of environment variable when it exists", fn() {
-      let identifier = "GLEAMYSHELL_TEST_ENV"
-      let value = "value"
+    it(
+      "returns the value of the given environment variable when it exists",
+      fn() {
+        let identifier = "GLEAMYSHELL_TEST_ENV"
+        let value = "value"
 
-      set_env(identifier, value)
+        set_env(identifier, value)
 
-      gleamyshell.env(identifier)
-      |> expect.to_be_some()
-      |> expect.to_equal(value)
+        gleamyshell.env(identifier)
+        |> expect.to_be_some()
+        |> expect.to_equal(value)
 
-      unset_env(identifier)
+        unset_env(identifier)
+      },
+    ),
+    it(
+      "returns nothing when the given environment variable does not exist",
+      fn() { expect.to_be_none(gleamyshell.env("GLEAMYSHELL_TEST_ENV")) },
+    ),
+  ])
+}
+
+pub fn which_tests() {
+  describe("gleamyshell/which", [
+    it("returns the path of the given executable when it could be found", fn() {
+      let executable_path =
+        execute_test_script("which")
+        |> expect.to_be_ok()
+        |> string.trim()
+
+      case gleamyshell.os() {
+        Windows ->
+          gleamyshell.which("cmd")
+          |> expect.to_be_some()
+          |> expect.to_equal(executable_path)
+        Unix(_) ->
+          gleamyshell.which("sh")
+          |> expect.to_be_some()
+          |> expect.to_equal(executable_path)
+      }
+
+      Nil
     }),
-    it("returns nothing when the environment variable does not exist", fn() {
-      expect.to_be_none(gleamyshell.env("GLEAMYSHELL_TEST_ENV"))
+    it("returns nothing when the given executable could not be found", fn() {
+      expect.to_be_none(gleamyshell.which("_whoami_"))
     }),
   ])
 }

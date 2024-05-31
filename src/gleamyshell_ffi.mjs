@@ -46,12 +46,18 @@ export function os() {
     }
 }
 
-export function home_directory() {
+export function homeDirectory() {
     try {
         return new Some(operating_system.homedir())
     } catch {
         return new None()
     }
+}
+
+export function env(identifier) {
+    const value = process.env[identifier]
+
+    return value == null ? new None() : new Some(value)
 }
 
 function toResult(result) {

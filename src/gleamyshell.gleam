@@ -201,6 +201,20 @@ pub fn home_directory() -> Option(String)
 @external(javascript, "./gleamyshell_ffi.mjs", "env")
 pub fn env(identifier: String) -> Option(String)
 
+/// Returns the location of the given executable when it could be found.
+/// 
+/// ## Example
+/// 
+/// ```gleam
+/// case gleamyshell.which("git") {
+///   Some(_) -> io.println("Doing something with Git.")
+///   None -> io.println("Git could not be found.")
+/// }
+/// ```
+@external(erlang, "gleamyshell_ffi", "which")
+@external(javascript, "./gleamyshell_ffi.mjs", "which")
+pub fn which(executable: String) -> Option(String)
+
 fn to_abort_reason(reason: String) -> AbortReason {
   case
     reason

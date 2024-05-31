@@ -95,6 +95,26 @@ pub fn home_directory_tests() {
   ])
 }
 
+pub fn env_tests() {
+  describe("gleamyshell/env", [
+    it("returns the value of environment variable when it exists", fn() {
+      let identifier = "GLEAMYSHELL_TEST_ENV"
+      let value = "value"
+
+      set_env(identifier, value)
+
+      gleamyshell.env(identifier)
+      |> expect.to_be_some()
+      |> expect.to_equal(value)
+
+      unset_env(identifier)
+    }),
+    it("returns nothing when the environment variable does not exist", fn() {
+      expect.to_be_none(gleamyshell.env("GLEAMYSHELL_TEST_ENV"))
+    }),
+  ])
+}
+
 fn execute_test_script(file_name: String) -> Result(String, CommandError) {
   let test_script_directory = "test/scripts/"
 
@@ -123,3 +143,11 @@ fn execute_test_script_in(
       gleamyshell.execute_in("sh", [file_name <> ".sh"], working_directory)
   }
 }
+
+@external(erlang, "gleamyshell_test_ffi", "set_env")
+@external(javascript, "./gleamyshell_test_ffi.mjs", "setEnv")
+fn set_env(identifier: String, value: String) -> Nil
+
+@external(erlang, "gleamyshell_test_ffi", "unset_env")
+@external(javascript, "./gleamyshell_test_ffi.mjs", "unsetEnv")
+fn unset_env(identifier: String) -> Nil

@@ -183,8 +183,23 @@ pub fn os() -> OsFamily
 /// }
 /// ```
 @external(erlang, "gleamyshell_ffi", "home_directory")
-@external(javascript, "./gleamyshell_ffi.mjs", "home_directory")
+@external(javascript, "./gleamyshell_ffi.mjs", "homeDirectory")
 pub fn home_directory() -> Option(String)
+
+/// Returns the value of the given environment variable when it is set.
+/// 
+/// ## Example
+/// 
+/// ```gleam
+/// case gleamyshell.env("JAVA_HOME") {
+///   Some(dir) -> io.println("Java runtime location: " <> dir)
+///   None -> 
+///     io.println("The location of the Java runtime could not be found.")
+/// }
+/// ```
+@external(erlang, "gleamyshell_ffi", "env")
+@external(javascript, "./gleamyshell_ffi.mjs", "env")
+pub fn env(identifier: String) -> Option(String)
 
 fn to_abort_reason(reason: String) -> AbortReason {
   case

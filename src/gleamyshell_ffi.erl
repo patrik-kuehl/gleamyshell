@@ -1,5 +1,5 @@
 -module(gleamyshell_ffi).
--export([cwd/0, os/0, home_directory/0]).
+-export([cwd/0, os/0, home_directory/0, env/1]).
 
 cwd() ->
     try
@@ -28,6 +28,12 @@ home_directory() ->
     case init:get_argument(home) of
         {ok, [[Dir] | _]} -> {some, unicode:characters_to_binary(Dir, utf8)};
         _ -> none
+    end.
+
+env(Identifier) ->
+    case os:getenv(binary_to_list(Identifier)) of
+        false -> none;
+        Value -> {some, unicode:characters_to_binary(Value, utf8)}
     end.
 
 % Erlang's file:get_cwd/0 function returns a POSIX-style path, even on Windows.

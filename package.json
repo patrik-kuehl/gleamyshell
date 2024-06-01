@@ -1,12 +1,12 @@
 {
     "private": true,
     "scripts": {
-        "format": "prettier --write . && mix format && gleam format",
+        "format": "prettier --write . && gleam format",
         "test-on-erlang": "gleam test",
         "test-on-nodejs": "gleam test --target javascript",
         "test-on-deno": "gleam test --target javascript --runtime deno",
         "test": "npm run test-on-erlang && npm run test-on-nodejs && npm run test-on-deno",
-        "check": "prettier --check . && mix format --check-formatted && gleam format --check src test",
+        "check": "prettier --check . && gleam format --check src test",
         "update-changelog": "git-cliff --unreleased --prepend CHANGELOG.md",
         "commit-changelog": "git add CHANGELOG.md && git commit -m \"docs(changelog): update changelog\"",
         "prepare": "husky"

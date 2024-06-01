@@ -26,9 +26,7 @@ be one of them.
 ### Getting the current username
 
 ```gleam
-let result = gleamyshell.execute("whoami", [])
-
-case result {
+case gleamyshell.execute("whoami", in: ".", args: []) {
   Ok(username) ->
     io.println("Hello there, " <> string.trim(username) <> "!")
   Error(Failure(output, exit_code)) ->

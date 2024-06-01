@@ -9,7 +9,6 @@ permissions:
 env:
   CI_OTP_VERSION: "25.2"
   CI_GLEAM_VERSION: 1.1.0
-  CI_ELIXIR_VERSION: "1.14"
   CI_REBAR3_VERSION: "3"
   CI_NODE_VERSION: 20.13.1
 
@@ -24,7 +23,6 @@ jobs:
         with:
           otp-version: ${{ env.CI_OTP_VERSION }}
           gleam-version: ${{ env.CI_GLEAM_VERSION }}
-          elixir-version: ${{ env.CI_ELIXIR_VERSION }}
           rebar3-version: ${{ env.CI_REBAR3_VERSION }}
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -50,7 +48,6 @@ jobs:
         with:
           otp-version: ${{ env.CI_OTP_VERSION }}
           gleam-version: ${{ env.CI_GLEAM_VERSION }}
-          elixir-version: ${{ env.CI_ELIXIR_VERSION }}
           rebar3-version: ${{ env.CI_REBAR3_VERSION }}
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -76,7 +73,6 @@ jobs:
         with:
           otp-version: ${{ env.CI_OTP_VERSION }}
           gleam-version: ${{ env.CI_GLEAM_VERSION }}
-          elixir-version: ${{ env.CI_ELIXIR_VERSION }}
           rebar3-version: ${{ env.CI_REBAR3_VERSION }}
       - name: Publish Hex package
         env:

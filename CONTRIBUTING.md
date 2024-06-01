@@ -53,7 +53,6 @@ You can refer to the [npm scripts](#npm-scripts) section to find out how to upda
 |              Dependency               | Version  |
 | :-----------------------------------: | :------: |
 |      [Gleam](https://gleam.run/)      | \>= 1.1  |
-|  [Elixir](https://elixir-lang.org/)   | \>= 1.12 |
 |       [Deno](https://deno.com/)       | \>= 1.0  |
 |   [Node.js](https://nodejs.org/)\*    | \>= 20.0 |
 | [Docker](https://www.docker.com/)\*\* | \>= 24.0 |

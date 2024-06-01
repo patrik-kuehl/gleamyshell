@@ -18,8 +18,8 @@ You should use GleamyShell if
 -   you don't have special use cases that GleamyShell's API cannot serve\*.
 
 \* Feel free to [open an issue](https://github.com/patrik-kuehl/gleamyshell/issues) on GitHub to discuss your feature
-request. GleamyShell only implements features that can provide the same behavior on all supported targets. Yours might
-be one of them.
+request. GleamyShell aims to implement features that can provide a similar, or ideally the same behavior on all
+supported targets. Yours might be one of them.
 
 ## Usage
 

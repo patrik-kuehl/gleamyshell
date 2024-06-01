@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.5.0 - 2024-06-01
+
+**Side note**: The existing API of GleamyShell is now locked as a preparation for the upcoming 1.0.0 release.
+
+### Refactor
+
+-   Finalized the API for the `execute` function.
+
+### Miscellaneous Tasks
+
+-   Removed Elixir as a dependency.
+-   The `execute_in` function has been removed in favor of the `execute` function.
+
 ## 0.4.0 - 2024-05-31
 
 ### Features

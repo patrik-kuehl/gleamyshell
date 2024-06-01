@@ -18,8 +18,8 @@ By contributing to this project, you agree that your contributions will be licen
 
 ## Code Style Guide
 
-GleamyShell doesn't come with a strict code style guide. Everything is checked by [Prettier](https://prettier.io/), and
-the formatters that come with Mix and Gleam.
+GleamyShell doesn't come with a strict code style guide. Everything is checked by [Prettier](https://prettier.io/) and
+the formatter that comes with Gleam.
 
 You can run `npm run check` to check if everything is formatted accordingly and `npm run format` to run the formatters.
 

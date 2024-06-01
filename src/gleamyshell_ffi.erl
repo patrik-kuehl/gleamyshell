@@ -1,5 +1,11 @@
 -module(gleamyshell_ffi).
--export([cwd/0, os/0, home_directory/0, env/1, which/1]).
+-export([execute/3, cwd/0, os/0, home_directory/0, env/1, which/1]).
+
+execute(Executable, WorkingDirectory, Args) ->
+    case which(Executable) of
+        none -> {error, {abort, enoent}};
+        {some, ExecutablePath} -> do_execute(ExecutablePath, WorkingDirectory, Args)
+    end.
 
 cwd() ->
     try
@@ -43,13 +49,74 @@ which(Executable) ->
         {windows, Dir} -> {some, sanitize_path_on_windows(Dir)}
     end.
 
+do_execute(ExecutablePath, WorkingDirectory, Args) ->
+    Port = open_port(
+        {spawn_executable, binary_to_list(ExecutablePath)},
+        [
+            {cd, binary_to_list(WorkingDirectory)},
+            {args, Args},
+            stderr_to_stdout,
+            exit_status,
+            hide,
+            eof,
+            in
+        ]
+    ),
+
+    case port_result(Port, []) of
+        {Output, 0} ->
+            {ok, unicode:characters_to_binary(Output, utf8)};
+        {Output, ExitCode} ->
+            {error, {failure, unicode:characters_to_binary(Output, utf8), ExitCode}}
+    end.
+
+port_result(Port, IntermediateOutput) ->
+    receive
+        {Port, {data, {Flag, Bytes}}} ->
+            write_to_stdout(Flag, Bytes),
+
+            port_result(Port, [IntermediateOutput | Bytes]);
+        {Port, {data, Bytes}} ->
+            port_result(Port, [IntermediateOutput | Bytes]);
+        {Port, eof} ->
+            Port ! {self(), close},
+
+            receive
+                {Port, closed} -> true
+            end,
+
+            receive
+                {"EXIT", Port, _} -> ok
+            after 1 ->
+                ok
+            end,
+
+            ExitCode =
+                receive
+                    {Port, {exit_status, ReceivedExitCode}} -> ReceivedExitCode
+                end,
+
+            {lists:flatten(IntermediateOutput), ExitCode}
+    end.
+
+write_to_stdout(Flag, Bytes) ->
+    io:format("~ts", [
+        list_to_binary(
+            case Flag of
+                eol -> [Bytes, $\n];
+                noeol -> [Bytes]
+            end
+        )
+    ]).
+
 % Erlang's file:get_cwd/0 and os:find_executable/1 functions return a POSIX-style path,
 % even on Windows. To keep the return value consistent with the Node.js FFI implementation
 % and thus also consistent with all supported targets, some sanitization needs to be done.
 sanitize_path_on_windows(Path) ->
-    PathWithSanitizedDrive = case re:split(Path, "^([a-zA-Z0-9]*):", [{return, list}]) of
-        [_, Drive, RemainingPath] -> [string:to_upper(Drive), ":" | RemainingPath];
-        [RemainingPath] -> RemainingPath
-    end,
+    PathWithSanitizedDrive =
+        case re:split(Path, "^([a-zA-Z0-9]*):", [{return, list}]) of
+            [_, Drive, RemainingPath] -> [string:to_upper(Drive), ":" | RemainingPath];
+            [RemainingPath] -> RemainingPath
+        end,
 
     unicode:characters_to_binary(string:replace(PathWithSanitizedDrive, "/", "\\", all), utf8).

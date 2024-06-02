@@ -3,8 +3,31 @@
 
 execute(Executable, WorkingDirectory, Args) ->
     case which(Executable) of
-        none -> {error, {abort, enoent}};
-        {some, ExecutablePath} -> do_execute(ExecutablePath, WorkingDirectory, Args)
+        none ->
+            {error, {abort, enoent}};
+        {some, ExecutablePath} ->
+            try
+                do_execute(ExecutablePath, WorkingDirectory, Args)
+            catch
+                _:Reason ->
+                    case Reason of
+                        enomem ->
+                            {error, {abort, enomem}};
+                        eagain ->
+                            {error, {abort, eagain}};
+                        enametoolong ->
+                            {error, {abort, enametoolong}};
+                        emfile ->
+                            {error, {abort, emfile}};
+                        enfile ->
+                            {error, {abort, enfile}};
+                        eacces ->
+                            {error, {abort, eacces}};
+                        OtherReason ->
+                            {error,
+                                {abort, {other_abort_reason, atom_to_binary(OtherReason, utf8)}}}
+                    end
+            end
     end.
 
 cwd() ->

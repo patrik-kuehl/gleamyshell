@@ -10,12 +10,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Refactor
 
--   Finalized the API for the `execute` function.
+-   [**breaking**] Finalized the API for the `execute` function.
 
 ### Miscellaneous Tasks
 
 -   Removed Elixir as a dependency.
--   The `execute_in` function has been removed in favor of the `execute` function.
+-   [**breaking**] The `execute_in` function has been removed in favor of the `execute` function.
 
 ## 0.4.0 - 2024-05-31
 

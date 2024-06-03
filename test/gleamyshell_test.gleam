@@ -22,7 +22,7 @@ pub fn execute_tests() {
           let identifier = "GLEAMYSHELL_TEST_ENV"
           let value = "Greetings!"
 
-          set_env(identifier, value)
+          gleamyshell.set_env(identifier, value)
 
           execute_test_script(
             "test/scripts/env_variable_output",
@@ -86,7 +86,7 @@ pub fn execute_tests() {
           let identifier = "GLEAMYSHELL_TEST_ENV"
           let value = "Greetings!"
 
-          set_env(identifier, value)
+          gleamyshell.set_env(identifier, value)
 
           execute_test_script(
             "env_variable_output",
@@ -178,7 +178,7 @@ pub fn env_tests() {
         let identifier = "GLEAMYSHELL_TEST_ENV"
         let value = "value"
 
-        set_env(identifier, value)
+        gleamyshell.set_env(identifier, value)
 
         gleamyshell.env(identifier)
         |> expect.to_be_some()
@@ -191,6 +191,34 @@ pub fn env_tests() {
       "returns nothing when the given environment variable does not exist",
       fn() { expect.to_be_none(gleamyshell.env("GLEAMYSHELL_TEST_ENV")) },
     ),
+  ])
+}
+
+pub fn set_env_tests() {
+  describe("gleamyshell/set_env", [
+    it("returns true when the environment variable could be set", fn() {
+      let identifier = "GLEAMYSHELL_TEST_ENV"
+      let value = "value"
+
+      gleamyshell.set_env(identifier, value)
+      |> expect.to_be_true()
+
+      gleamyshell.env(identifier)
+      |> expect.to_be_some()
+      |> expect.to_equal(value)
+
+      unset_env(identifier)
+    }),
+    it("returns false when the environment variable could not be set", fn() {
+      let identifier = "123GLEAMYSHELL_TEST_ENV"
+      let value = "value"
+
+      gleamyshell.set_env(identifier, value)
+      |> expect.to_be_false()
+
+      gleamyshell.env(identifier)
+      |> expect.to_be_none()
+    }),
   ])
 }
 
@@ -239,10 +267,6 @@ fn execute_test_script(
       ])
   }
 }
-
-@external(erlang, "gleamyshell_test_ffi", "set_env")
-@external(javascript, "./gleamyshell_test_ffi.mjs", "setEnv")
-fn set_env(identifier: String, value: String) -> Nil
 
 @external(erlang, "gleamyshell_test_ffi", "unset_env")
 @external(javascript, "./gleamyshell_test_ffi.mjs", "unsetEnv")

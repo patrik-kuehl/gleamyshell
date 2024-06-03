@@ -77,6 +77,12 @@ export function env(identifier) {
     return value == null ? new None() : new Some(value)
 }
 
+export function setEnv(identifier, value) {
+    process.env[identifier] = value
+
+    return process.env[identifier] != null
+}
+
 export function which(executable) {
     let result = {}
 

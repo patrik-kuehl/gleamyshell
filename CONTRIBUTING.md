@@ -41,7 +41,7 @@ This project employs [Conventional Commits](https://www.conventionalcommits.org/
 ## Changelog
 
 [git-cliff](https://git-cliff.org/) is used to help writing the changelog of this project. Although git-cliff does the
-heavy lifting, you should always adjust to content (e.g., changing the tense, or removing entries irrelevant for a
+heavy lifting, you should always adjust the content (e.g., changing the tense, or removing entries irrelevant for a
 changelog).
 
 You can refer to the [npm scripts](#npm-scripts) section to find out how to update and commit the changelog.

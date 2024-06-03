@@ -1,4 +1,5 @@
 import gleam/option.{type Option}
+import gleam/regex
 
 /// Represents information about why a command execution failed.
 pub type CommandError {
@@ -146,6 +147,30 @@ pub fn home_directory() -> Option(String)
 @external(javascript, "./gleamyshell_ffi.mjs", "env")
 pub fn env(identifier: String) -> Option(String)
 
+/// Sets an environment variable.
+/// 
+/// Due to portability and sanity reasons, identifiers of environment variables
+/// must consist solely of digits, letters and underscores, and must not begin
+/// with a digit.
+/// 
+/// In a nutshell, the identifier must match this regex pattern:
+/// `^[a-zA-Z_]+[a-zA-Z0-9_]*$`
+/// 
+/// ## Example
+/// 
+/// ```gleam
+/// case gleamyshell.set_env(name: "FANCY_ENV", value: "fancy value") {
+///   True -> io.println("Now we can do fancy things.")
+///   False -> io.println("It probably wasn't fancy enough.")
+/// }
+/// ```
+pub fn set_env(name identifier: String, value value: String) -> Bool {
+  case is_valid_environment_variable_identifier(identifier) {
+    False -> False
+    True -> set_env_ffi(identifier, value)
+  }
+}
+
 /// Returns the location of the given executable when it could be found.
 /// 
 /// ## Example
@@ -159,3 +184,14 @@ pub fn env(identifier: String) -> Option(String)
 @external(erlang, "gleamyshell_ffi", "which")
 @external(javascript, "./gleamyshell_ffi.mjs", "which")
 pub fn which(executable: String) -> Option(String)
+
+fn is_valid_environment_variable_identifier(identifier: String) -> Bool {
+  case regex.from_string("^[a-zA-Z_]+[a-zA-Z0-9_]*$") {
+    Error(_) -> False
+    Ok(pattern) -> regex.check(with: pattern, content: identifier)
+  }
+}
+
+@external(erlang, "gleamyshell_ffi", "set_env")
+@external(javascript, "./gleamyshell_ffi.mjs", "setEnv")
+fn set_env_ffi(identifier: String, value: String) -> Bool

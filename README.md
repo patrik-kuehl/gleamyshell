@@ -21,6 +21,9 @@ You should use GleamyShell if
 request. GleamyShell aims to implement features that can provide a similar, or ideally the same behavior on all
 supported targets. Yours might be one of them.
 
+The main workhorse of GleamyShell is its `execute` function. The remaining functions are quality-of-life features so
+users of this library don't need to reach for further dependencies that often.
+
 ## Usage
 
 ### Getting the current username

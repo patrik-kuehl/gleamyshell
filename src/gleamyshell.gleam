@@ -5,7 +5,7 @@ import gleam/regex
 pub type CommandError {
   /// The command could be executed but returned a non-zero exit code.
   Failure(output: String, exit_code: Int)
-  /// The command did not execute and instead was aborted.
+  /// The command could not be executed completely and was aborted.
   Abort(reason: AbortReason)
 }
 

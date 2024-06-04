@@ -83,6 +83,12 @@ export function setEnv(identifier, value) {
     return process.env[identifier] != null
 }
 
+export function unsetEnv(identifier) {
+    delete process.env[identifier]
+
+    return process.env[identifier] == null
+}
+
 export function which(executable) {
     let result = {}
 

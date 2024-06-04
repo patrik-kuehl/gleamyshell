@@ -1,5 +1,5 @@
 -module(gleamyshell_ffi).
--export([execute/3, cwd/0, os/0, home_directory/0, env/1, set_env/2, which/1]).
+-export([execute/3, cwd/0, os/0, home_directory/0, env/1, set_env/2, unset_env/1, which/1]).
 
 execute(Executable, WorkingDirectory, Args) ->
     case which(Executable) of
@@ -71,6 +71,14 @@ set_env(Identifier, Value) ->
     case env(Identifier) of
         none -> false;
         {some, _} -> true
+    end.
+
+unset_env(Identifier) ->
+    os:unsetenv(binary_to_list(Identifier)),
+
+    case env(Identifier) of
+        none -> true;
+        {some, _} -> false
     end.
 
 which(Executable) ->

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.0 - 2024-06-07
+
+### Features
+
+-   Implemented the `unset_env` function.
+-   Implemented the `set_env` function.
+
 ## 0.5.0 - 2024-06-01
 
 **Side note**: The existing API of GleamyShell is now locked as a preparation for the upcoming 1.0.0 release.

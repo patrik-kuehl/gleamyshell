@@ -5,7 +5,7 @@ import gleam/regex
 pub type CommandError {
   /// The command could be executed but returned a non-zero exit code.
   Failure(output: String, exit_code: Int)
-  /// The command did not execute and instead was aborted.
+  /// The command could not be executed completely and was aborted.
   Abort(reason: AbortReason)
 }
 
@@ -171,7 +171,21 @@ pub fn set_env(name identifier: String, value value: String) -> Bool {
   }
 }
 
-/// Returns the location of the given executable when it could be found.
+/// Unsets an environment variable.
+/// 
+/// ## Example
+/// 
+/// ```gleam
+/// case gleamyshell.unset_env("DELETE_ME") {
+///   True -> io.println("Bye bye!")
+///   False -> io.println("This shouldn't have happened …")
+/// }
+/// ```
+@external(erlang, "gleamyshell_ffi", "unset_env")
+@external(javascript, "./gleamyshell_ffi.mjs", "unsetEnv")
+pub fn unset_env(identifier: String) -> Bool
+
+/// Returns the location of the given executable if it could be found.
 /// 
 /// ## Example
 /// 

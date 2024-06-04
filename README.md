@@ -14,7 +14,7 @@ a minimal API with common functionalities supported by those targets.
 You should use GleamyShell if
 
 -   you need or want to support multiple targets _and/or_
--   synchronous shell command execution is not a concern _and most importantly_
+-   synchronous shell command execution is not a concern, _and most importantly_,
 -   you don't have special use cases that GleamyShell's API cannot serve\*.
 
 \* Feel free to [open an issue](https://github.com/patrik-kuehl/gleamyshell/issues) on GitHub to discuss your feature

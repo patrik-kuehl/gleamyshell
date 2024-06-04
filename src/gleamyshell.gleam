@@ -100,9 +100,6 @@ pub fn cwd() -> Option(String)
 
 /// Returns information about the host's operating system.
 /// 
-/// This function is meant to be a quality-of-life feature where someone needs to execute different
-/// shell commands that differ depending on the operating system.
-/// 
 /// ## Example
 /// 
 /// ```gleam
@@ -132,7 +129,7 @@ pub fn os() -> OsFamily
 @external(javascript, "./gleamyshell_ffi.mjs", "homeDirectory")
 pub fn home_directory() -> Option(String)
 
-/// Returns the value of the given environment variable when it is set.
+/// Returns the value of the given environment variable if it is set.
 /// 
 /// ## Example
 /// 

@@ -25,10 +25,16 @@ import {
 } from "./gleamyshell.mjs"
 
 export function execute(executable, workingDirectory, args) {
+    if (isEqual(which(executable), new None())) {
+        return new Error(new Abort(new Enoent()))
+    }
+
     let result = {}
 
     try {
-        result = child_process.spawnSync(executable, args.toArray(), { cwd: workingDirectory })
+        result = isBun()
+            ? Bun.spawnSync([executable, ...args.toArray()], { cwd: workingDirectory, env: process.env })
+            : child_process.spawnSync(executable, args.toArray(), { cwd: workingDirectory })
     } catch {}
 
     return childProcessResultToGleamResult(result)
@@ -90,22 +96,37 @@ export function unsetEnv(identifier) {
 }
 
 export function which(executable) {
+    const windowsArgs = ["powershell", `(gcm ${executable}).Path`]
+    const unixArgs = ["which", executable]
+
     let result = {}
 
     try {
         if (isEqual(os(), new Windows())) {
-            result = child_process.spawnSync("powershell", [`(gcm ${executable}).Path`])
+            result = isBun() ? Bun.spawnSync(windowsArgs) : child_process.spawnSync(windowsArgs[0], [windowsArgs[1]])
         } else {
-            result = child_process.spawnSync("which", [executable])
+            result = isBun() ? Bun.spawnSync(unixArgs) : child_process.spawnSync(unixArgs[0], [unixArgs[1]])
         }
     } catch {}
 
-    return result.status === 0 && result.stdout != null && result.stdout.toString().trim() !== ""
+    return (isBun() ? result.exitCode === 0 : result.status === 0) &&
+        result.stdout != null &&
+        result.stdout.toString().trim() !== ""
         ? new Some(result.stdout.toString().trim())
         : new None()
 }
 
 function childProcessResultToGleamResult(result) {
+    return isBun() ? bunChildProcessResultToGleamResult(result) : nodeChildProcessResultToGleamResult(result)
+}
+
+function bunChildProcessResultToGleamResult(result) {
+    return result.exitCode === 0
+        ? new Ok(result.stdout?.toString() ?? "")
+        : new Error(new Failure(result.stderr?.toString() ?? "", result.exitCode))
+}
+
+function nodeChildProcessResultToGleamResult(result) {
     if (result.status === 0) {
         return new Ok(result.stdout?.toString() ?? "")
     }
@@ -129,9 +150,11 @@ function childProcessResultToGleamResult(result) {
             return new Error(new Abort(new Enfile()))
         case "EACCES":
             return new Error(new Abort(new Eacces()))
-        case "ENOENT":
-            return new Error(new Abort(new Enoent()))
         default:
             return new Error(new Abort(new OtherAbortReason(error_code)))
     }
+}
+
+function isBun() {
+    return typeof Bun !== "undefined"
 }

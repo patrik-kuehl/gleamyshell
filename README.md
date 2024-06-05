@@ -1,7 +1,7 @@
 # GleamyShell
 
-GleamyShell is a cross-platform Gleam library for executing shell commands that supports multiple targets (Erlang, Deno,
-and Node.js).
+GleamyShell is a cross-platform Gleam library for executing shell commands that supports all non-browser targets
+(Erlang, Bun, Deno, and Node.js).
 
 ## When to use GleamyShell?
 

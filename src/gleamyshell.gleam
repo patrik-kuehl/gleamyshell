@@ -5,7 +5,9 @@ import gleam/regex
 pub type CommandError {
   /// The command could be executed but returned a non-zero exit code.
   Failure(output: String, exit_code: Int)
-  /// The command could not be executed completely and was aborted.
+  /// The command could not be executed completely and was aborted. You usually
+  /// don't want to pattern match the specific reason and when targeting Bun,
+  /// you won't receive any reason besides `Enoent` due to Bun's limitations here.
   Abort(reason: AbortReason)
 }
 

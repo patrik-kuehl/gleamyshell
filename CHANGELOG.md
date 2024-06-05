@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Features
 
--   Introduce official support for [Bun](https://bun.sh/).
+-   Introduced official support for [Bun](https://bun.sh/).
 
 ## 1.0.0 - 2024-06-04
 

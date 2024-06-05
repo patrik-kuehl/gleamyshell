@@ -20,18 +20,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up BEAM dependencies
-        uses: erlef/setup-beam@v1
-        with:
-          otp-version: ${{ env.CI_OTP_VERSION }}
-          gleam-version: ${{ env.CI_GLEAM_VERSION }}
-          rebar3-version: ${{ env.CI_REBAR3_VERSION }}
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.CI_NODE_VERSION }}
-      - name: Install npm and Gleam package dependencies
-        run: npm ci && gleam deps download
+      - name: Install npm packages
+        run: npm ci
       - name: Check commit messages
         uses: wagoid/commitlint-github-action@v6
         with:
@@ -59,7 +53,11 @@ jobs:
         uses: denoland/setup-deno@v1
         with:
           deno-version: 1.43.5
-      - name: Install npm and Gleam package dependencies
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: 1.1.8
+      - name: Install npm and Gleam packages
         run: npm ci && gleam deps download
       - name: Run tests
         run: npm run test

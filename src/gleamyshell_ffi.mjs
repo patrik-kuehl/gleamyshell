@@ -29,15 +29,7 @@ export function execute(executable, workingDirectory, args) {
         return new Error(new Abort(new Enoent()))
     }
 
-    let result = {}
-
-    try {
-        result = isBun()
-            ? Bun.spawnSync([executable, ...args.toArray()], { cwd: workingDirectory, env: process.env })
-            : child_process.spawnSync(executable, args.toArray(), { cwd: workingDirectory })
-    } catch {}
-
-    return childProcessResultToGleamResult(result)
+    return childProcessResultToGleamResult(spawnSync(executable, args.toArray(), workingDirectory))
 }
 
 export function cwd() {
@@ -99,34 +91,33 @@ export function which(executable) {
     const windowsArgs = ["powershell", `(gcm ${executable}).Path`]
     const unixArgs = ["which", executable]
 
-    let result = {}
+    let result = isEqual(os(), new Windows())
+        ? spawnSync(windowsArgs[0], [windowsArgs[1]], ".")
+        : spawnSync(unixArgs[0], [unixArgs[1]], ".")
 
-    try {
-        if (isEqual(os(), new Windows())) {
-            result = isBun() ? Bun.spawnSync(windowsArgs) : child_process.spawnSync(windowsArgs[0], [windowsArgs[1]])
-        } else {
-            result = isBun() ? Bun.spawnSync(unixArgs) : child_process.spawnSync(unixArgs[0], [unixArgs[1]])
-        }
-    } catch {}
-
-    return (isBun() ? result.exitCode === 0 : result.status === 0) &&
-        result.stdout != null &&
-        result.stdout.toString().trim() !== ""
+    return result.status === 0 && result.stdout != null && result.stdout.toString().trim() !== ""
         ? new Some(result.stdout.toString().trim())
         : new None()
 }
 
+function spawnSync(executable, args, workingDirectory) {
+    let result = {}
+
+    try {
+        result =
+            typeof Bun !== "undefined"
+                ? Bun.spawnSync([executable, ...args], { cwd: workingDirectory, env: process.env })
+                : child_process.spawnSync(executable, args, { cwd: workingDirectory })
+
+        if (result.exitCode != null) {
+            result.status = result.exitCode
+        }
+    } catch {}
+
+    return result
+}
+
 function childProcessResultToGleamResult(result) {
-    return isBun() ? bunChildProcessResultToGleamResult(result) : nodeChildProcessResultToGleamResult(result)
-}
-
-function bunChildProcessResultToGleamResult(result) {
-    return result.exitCode === 0
-        ? new Ok(result.stdout?.toString() ?? "")
-        : new Error(new Failure(result.stderr?.toString() ?? "", result.exitCode))
-}
-
-function nodeChildProcessResultToGleamResult(result) {
     if (result.status === 0) {
         return new Ok(result.stdout?.toString() ?? "")
     }
@@ -153,8 +144,4 @@ function nodeChildProcessResultToGleamResult(result) {
         default:
             return new Error(new Abort(new OtherAbortReason(error_code)))
     }
-}
-
-function isBun() {
-    return typeof Bun !== "undefined"
 }

@@ -1,3 +1,8 @@
+[![Package Version](https://img.shields.io/hexpm/v/gleamyshell)](https://hex.pm/packages/gleamyshell)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/gleamyshell)
+![Erlang-compatible](https://img.shields.io/badge/target-erlang-a2003e)
+![JavaScript-compatible](https://img.shields.io/badge/target-javascript-f1e05a)
+
 # GleamyShell
 
 GleamyShell is a cross-platform Gleam library for executing shell commands that supports all non-browser targets

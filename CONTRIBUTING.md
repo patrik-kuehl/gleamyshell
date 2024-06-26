@@ -51,11 +51,8 @@ This project employs [Conventional Commits](https://www.conventionalcommits.org/
 
 ## Changelog
 
-[git-cliff](https://git-cliff.org/) is used to help writing the changelog of this project. Although git-cliff does the
-heavy lifting, you should always adjust the content (e.g., changing the tense, or removing entries irrelevant for a
-changelog).
-
-You can refer to the [npm scripts](#npm-scripts) section to find out how to update and commit the changelog.
+This project maintains a changelog based on the format of [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Make
+sure to add notable changes to the changelog before submitting a pull request.
 
 ## Development Environment
 
@@ -77,14 +74,12 @@ compatibility.
 
 ### npm Scripts
 
-|      Script      |                       Description                       |
-| :--------------: | :-----------------------------------------------------: |
-|      check       |      checks if everything is formatted accordingly      |
-|      format      |                   applies formatting                    |
-|       test       |          runs tests on all non-browser targets          |
-|  test-on-erlang  |             runs tests on the Erlang target             |
-|  test-on-nodejs  |            runs tests on the Node.js target             |
-|   test-on-deno   |              runs tests on the Deno target              |
-|   test-on-bun    |              runs tests on the Bun target               |
-| update-changelog |                  updates the changelog                  |
-| commit-changelog | commits the changelog using a predefined commit message |
+|     Script     |                  Description                  |
+| :------------: | :-------------------------------------------: |
+|     check      | checks if everything is formatted accordingly |
+|     format     |              applies formatting               |
+|      test      |     runs tests on all non-browser targets     |
+| test-on-erlang |        runs tests on the Erlang target        |
+| test-on-nodejs |       runs tests on the Node.js target        |
+|  test-on-deno  |         runs tests on the Deno target         |
+|  test-on-bun   |         runs tests on the Bun target          |

@@ -2,73 +2,77 @@
 
 All notable changes to this project will be documented in this file.
 
-This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.1.0 - 2024-06-06
+## [1.1.0] - 2024-06-06
 
-### Features
+### Added
 
 -   Introduced official support for [Bun](https://bun.sh/).
 
-## 1.0.0 - 2024-06-04
+## [1.0.0] - 2024-06-04
 
-### Features
+### Added
 
--   Implemented the `unset_env` function.
--   Implemented the `set_env` function.
+-   Added `gleamyshell/unset_env` to unset an environment variable.
+-   Added `gleamyshell/set_env` to set an environment variable.
 
-## 0.5.0 - 2024-06-01
+## [0.5.0] - 2024-06-01
 
-**Side note**: The existing API of GleamyShell is now locked as a preparation for the upcoming 1.0.0 release.
-
-### Refactor
-
--   [**breaking**] Finalized the API for the `execute` function.
-
-### Miscellaneous Tasks
+### Removed
 
 -   Removed Elixir as a dependency.
--   [**breaking**] The `execute_in` function has been removed in favor of the `execute` function.
+-   **(breaking)** Removed `gleamyshell/execute_in` in favor of `gleamyshell/execute`.
 
-## 0.4.0 - 2024-05-31
+## [0.4.0] - 2024-05-31
 
-### Features
+### Added
 
--   Implemented the `env` function.
--   Implemented the `which` function.
+-   Added `gleamyshell/env` to get the value of an environment variable.
+-   Added `gleamyshell/which` to get the path of an executable.
 
-## 0.3.1 - 2024-05-29
+## [0.3.1] - 2024-05-29
 
-### Bug Fixes
+### Fixed
 
--   Made the internal `cwd_ffi` function private again.
+-   Made `gleamyshell/cwd_ffi` private again.
 
-## 0.3.0 - 2024-05-29
+## [0.3.0] - 2024-05-29
 
-### Features
+### Added
 
--   Implemented the `home_directory` function.
+-   Added `gleamyshell/home_directory` to get the path of the user's home directory.
 
-### Bug Fixes
+### Fixed
 
--   [**breaking**] The `cwd` function now provides a consistent output across all supported targets.
--   Removed the freezing of the standard library version for consumers of the library. Discovered and fixed thanks to
+-   **(breaking)** `gleamyshell/cwd` now returns a consistent output across all supported targets.
+-   Removed the freezing of the standard library version. Discovered and fixed thanks to
     [@darky](https://github.com/darky).
 
-## 0.2.0 - 2024-05-28
+## [0.2.0] - 2024-05-28
 
-### Features
+### Added
 
--   Implemented the `os` function.
--   [**breaking**] Defined the `OsFamily` and `Os` types, and renamed a constructor of the `AbortReason` type.
+-   Added `gleamyshell/os` to get information about the operating system.
+-   **(breaking)** Defined the `gleamyshell/OsFamily` and `gleamyshell/Os` types, and renamed a constructor of the
+    `gleamyshell/AbortReason` type.
 
-## 0.1.0 - 2024-05-26
+## [0.1.0] - 2024-05-26
 
-### Features
+### Added
 
--   Implemented the `execute_in` function.
--   Implemented the `cwd` function.
--   Implemented the `execute` function.
--   Defined the `CommandError` and `AbortReason` types.
+-   Added `gleamyshell/execute_in` to run a command in a specific working directory.
+-   Added `gleamyshell/cwd` to get the path of the current working directory.
+-   Added `gleamyshell/execute` to run a command.
+-   Defined the `gleamyshell/CommandError` and `gleamyshell/AbortReason` types.
 
-<!-- scaffolded by git-cliff -->
+[unreleased]: https://github.com/patrik-kuehl/gleamyshell/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/patrik-kuehl/gleamyshell/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/patrik-kuehl/gleamyshell/compare/v0.5.0...v1.0.0
+[0.5.0]: https://github.com/patrik-kuehl/gleamyshell/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/patrik-kuehl/gleamyshell/compare/v0.3.1...v0.4.0
+[0.3.1]: https://github.com/patrik-kuehl/gleamyshell/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/patrik-kuehl/gleamyshell/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/patrik-kuehl/gleamyshell/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/patrik-kuehl/gleamyshell/releases/tag/v0.1.0

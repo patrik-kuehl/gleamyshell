@@ -61,24 +61,24 @@ home_directory() ->
 
 env(Identifier) ->
     case os:getenv(binary_to_list(Identifier)) of
-        false -> none;
-        Value -> {some, unicode:characters_to_binary(Value, utf8)}
+        false -> {error, nil};
+        Value -> {ok, unicode:characters_to_binary(Value, utf8)}
     end.
 
 set_env(Identifier, Value) ->
     os:putenv(binary_to_list(Identifier), binary_to_list(Value)),
 
     case env(Identifier) of
-        none -> false;
-        {some, _} -> true
+        {error, _} -> false;
+        {ok, _} -> true
     end.
 
 unset_env(Identifier) ->
     os:unsetenv(binary_to_list(Identifier)),
 
     case env(Identifier) of
-        none -> true;
-        {some, _} -> false
+        {error, _} -> true;
+        {ok, _} -> false
     end.
 
 which(Executable) ->

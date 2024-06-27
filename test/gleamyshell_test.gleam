@@ -188,7 +188,7 @@ pub fn home_directory_tests() {
         |> string.trim()
 
       gleamyshell.home_directory()
-      |> expect.to_be_some()
+      |> expect.to_be_ok()
       |> expect.to_equal(home_directory)
     }),
   ])

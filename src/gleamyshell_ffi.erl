@@ -55,8 +55,8 @@ os() ->
 
 home_directory() ->
     case init:get_argument(home) of
-        {ok, [[Dir] | _]} -> {some, unicode:characters_to_binary(Dir, utf8)};
-        _ -> none
+        {ok, [[Dir] | _]} -> {ok, unicode:characters_to_binary(Dir, utf8)};
+        _ -> {error, nil}
     end.
 
 env(Identifier) ->

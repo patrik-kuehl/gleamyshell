@@ -120,14 +120,14 @@ pub fn os() -> OsFamily
 /// 
 /// ```gleam
 /// case gleamyshell.home_directory() {
-///   Some(home_directory) -> io.println("Home directory: " <> home_directory)
-///   None ->
+///   Ok(home_directory) -> io.println("Home directory: " <> home_directory)
+///   Error(_) ->
 ///     io.println("Couldn't detect the home directory of the current user.")
 /// }
 /// ```
 @external(erlang, "gleamyshell_ffi", "home_directory")
 @external(javascript, "./gleamyshell_ffi.mjs", "homeDirectory")
-pub fn home_directory() -> Option(String)
+pub fn home_directory() -> Result(String, Nil)
 
 /// Returns the value of the given environment variable if it is set.
 /// 

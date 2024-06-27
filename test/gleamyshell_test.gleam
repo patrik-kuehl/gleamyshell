@@ -169,7 +169,7 @@ pub fn cwd_tests() {
         |> string.trim()
 
       gleamyshell.cwd()
-      |> expect.to_be_some()
+      |> expect.to_be_ok()
       |> expect.to_equal(cwd)
     }),
   ])

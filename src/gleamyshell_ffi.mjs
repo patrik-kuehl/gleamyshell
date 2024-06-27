@@ -34,9 +34,9 @@ export function execute(executable, workingDirectory, args) {
 
 export function cwd() {
     try {
-        return new Some(process.cwd())
+        return new Ok(process.cwd())
     } catch {
-        return new None()
+        return new Error(null)
     }
 }
 

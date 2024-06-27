@@ -35,11 +35,11 @@ cwd() ->
         {ok, Cwd} = file:get_cwd(),
 
         case os() of
-            windows -> {some, sanitize_path_on_windows(Cwd)};
-            _ -> {some, unicode:characters_to_binary(Cwd, utf8)}
+            windows -> {ok, sanitize_path_on_windows(Cwd)};
+            _ -> {ok, unicode:characters_to_binary(Cwd, utf8)}
         end
     catch
-        _ -> none
+        _ -> {error, nil}
     end.
 
 os() ->

@@ -85,20 +85,18 @@ pub fn execute(
 
 /// Returns the current working directory.
 /// 
-/// This function returns an `Option` because it can fail on Unix-like systems in rare circumstances.
-/// 
 /// ## Example
 /// 
 /// ```gleam
 /// case gleamyshell.cwd() {
-///   Some(working_directory) ->
+///   Ok(working_directory) ->
 ///     io.println("Current working directory: " <> working_directory)
-///   None -> io.println("Couldn't detect the current working directory.")
+///   Error(_) -> io.println("Couldn't detect the current working directory.")
 /// }
 /// ```
 @external(erlang, "gleamyshell_ffi", "cwd")
 @external(javascript, "./gleamyshell_ffi.mjs", "cwd")
-pub fn cwd() -> Option(String)
+pub fn cwd() -> Result(String, Nil)
 
 /// Returns information about the host's operating system.
 /// 

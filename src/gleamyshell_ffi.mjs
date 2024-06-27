@@ -63,9 +63,9 @@ export function os() {
 
 export function homeDirectory() {
     try {
-        return new Some(operating_system.homedir())
+        return new Ok(operating_system.homedir())
     } catch {
-        return new None()
+        return new Error(null)
     }
 }
 

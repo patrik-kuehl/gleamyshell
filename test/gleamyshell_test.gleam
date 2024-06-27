@@ -204,7 +204,7 @@ pub fn env_tests() {
         gleamyshell.set_env(test_environment_variable_identifier, value)
 
         gleamyshell.env(test_environment_variable_identifier)
-        |> expect.to_be_some()
+        |> expect.to_be_ok()
         |> expect.to_equal(value)
 
         clean_up_environment_variables([test_environment_variable_identifier])
@@ -213,7 +213,7 @@ pub fn env_tests() {
     it(
       "returns nothing when the given environment variable does not exist",
       fn() {
-        expect.to_be_none(gleamyshell.env(test_environment_variable_identifier))
+        expect.to_be_error(gleamyshell.env(test_environment_variable_identifier))
       },
     ),
   ])
@@ -228,7 +228,7 @@ pub fn set_env_tests() {
       |> expect.to_be_true()
 
       gleamyshell.env(test_environment_variable_identifier)
-      |> expect.to_be_some()
+      |> expect.to_be_ok()
       |> expect.to_equal(value)
 
       clean_up_environment_variables([test_environment_variable_identifier])
@@ -241,7 +241,7 @@ pub fn set_env_tests() {
       |> expect.to_be_false()
 
       gleamyshell.env(identifier)
-      |> expect.to_be_none()
+      |> expect.to_be_error()
 
       clean_up_environment_variables([identifier])
     }),

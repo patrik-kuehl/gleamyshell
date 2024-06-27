@@ -135,14 +135,14 @@ pub fn home_directory() -> Result(String, Nil)
 /// 
 /// ```gleam
 /// case gleamyshell.env("JAVA_HOME") {
-///   Some(dir) -> io.println("Java runtime location: " <> dir)
-///   None -> 
+///   Ok(dir) -> io.println("Java runtime location: " <> dir)
+///   Error(_) -> 
 ///     io.println("The location of the Java runtime could not be found.")
 /// }
 /// ```
 @external(erlang, "gleamyshell_ffi", "env")
 @external(javascript, "./gleamyshell_ffi.mjs", "env")
-pub fn env(identifier: String) -> Option(String)
+pub fn env(identifier: String) -> Result(String, Nil)
 
 /// Sets an environment variable.
 /// 

@@ -52,9 +52,9 @@ case gleamyshell.execute("whoami", in: ".", args: []) {
 
 ```gleam
 case gleamyshell.cwd() {
-  Some(working_directory) ->
+  Ok(working_directory) ->
     io.println("Current working directory: " <> working_directory)
-  None ->
+  Error(_) ->
     io.println("Couldn't detect the current working directory.")
 }
 ```

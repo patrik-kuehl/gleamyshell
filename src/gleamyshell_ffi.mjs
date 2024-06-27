@@ -72,7 +72,7 @@ export function homeDirectory() {
 export function env(identifier) {
     const value = process.env[identifier]
 
-    return value == null ? new None() : new Some(value)
+    return value == null ? new Error(null) : new Ok(value)
 }
 
 export function setEnv(identifier, value) {

@@ -43,18 +43,30 @@ pub type OsFamily {
 
 /// Represents names of operating systems.
 pub type Os {
-  /// The Unix operating system used by Apple as a core for its operating systems (e.g., macOS).
+  /// The Unix operating system used by Apple as a core for its
+  /// operating systems (e.g., macOS).
   Darwin
   /// A free Unix-like operating system descended from AT&T's UNIX.
   FreeBsd
   /// A free Unix-like operating system forked from NetBSD.
   OpenBsd
-  /// The Linux kernel is the base for many Unix-like operating systems like Debian.
+  /// The Linux kernel is the base for many Unix-like operating
+  /// systems like Debian.
   Linux
-  /// The Unix-like operating system SunOS is used as a core for other distributions like Solaris.
+  /// The Unix-like operating system SunOS is used as a core for
+  /// other distributions like Solaris.
   SunOs
   /// An operating system not represented by the other options.
   OtherOs(String)
+}
+
+/// Represents the reason why an environment variable could not be set.
+pub type SetEnvironmentVariableError {
+  // The identifier of the environment variable does not match the
+  // `^[a-zA-Z_]+[a-zA-Z0-9_]*$` regex pattern.
+  InvalidIdentifier
+  // The environment variable could not be set.
+  CouldNotBeSet
 }
 
 /// Executes the given command with arguments.
@@ -153,17 +165,25 @@ pub fn env(identifier: String) -> Result(String, Nil)
 /// In a nutshell, the identifier must match this regex pattern:
 /// `^[a-zA-Z_]+[a-zA-Z0-9_]*$`
 /// 
+/// Nested environment variables won't be resolved due to the limitations of
+/// the APIs of Erlang and Node.js that are responsible for setting environment
+/// variables.
+/// 
 /// ## Example
 /// 
 /// ```gleam
 /// case gleamyshell.set_env(name: "FANCY_ENV", value: "fancy value") {
-///   True -> io.println("Now we can do fancy things.")
-///   False -> io.println("It probably wasn't fancy enough.")
+///   Ok(value) -> io.println("Value: " <> value)
+///   Error(InvalidIdentifier) -> io.println("Well, let's try another name.")
+///   Error(CouldNotBeSet) -> io.println("It probably wasn't fancy enough.")
 /// }
 /// ```
-pub fn set_env(name identifier: String, value value: String) -> Bool {
+pub fn set_env(
+  name identifier: String,
+  value value: String,
+) -> Result(String, SetEnvironmentVariableError) {
   case is_valid_environment_variable_identifier(identifier) {
-    False -> False
+    False -> Error(InvalidIdentifier)
     True -> set_env_ffi(identifier, value)
   }
 }
@@ -205,4 +225,7 @@ fn is_valid_environment_variable_identifier(identifier: String) -> Bool {
 
 @external(erlang, "gleamyshell_ffi", "set_env")
 @external(javascript, "./gleamyshell_ffi.mjs", "setEnv")
-fn set_env_ffi(identifier: String, value: String) -> Bool
+fn set_env_ffi(
+  identifier: String,
+  value: String,
+) -> Result(String, SetEnvironmentVariableError)

@@ -1,11 +1,9 @@
 import gleam/string
-import gleamyshell.{type CommandError, Abort, Enoent, Failure, Unix, Windows}
+import gleamyshell.{
+  type CommandError, Abort, Enoent, Failure, InvalidIdentifier, Unix, Windows,
+}
 import startest.{describe, it}
 import startest/expect
-
-const test_scripts_directory = "./test/scripts/"
-
-const test_environment_variable_identifier = "GLEAMYSHELL_TEST_ENV"
 
 pub fn main() {
   startest.run(startest.default_config())
@@ -30,6 +28,7 @@ pub fn execute_tests() {
           let value = "Greetings!"
 
           gleamyshell.set_env(test_environment_variable_identifier, value)
+          |> expect.to_be_ok()
 
           execute_test_script(
             test_scripts_directory <> "env_variable_output",
@@ -101,6 +100,7 @@ pub fn execute_tests() {
           let value = "Greetings!"
 
           gleamyshell.set_env(test_environment_variable_identifier, value)
+          |> expect.to_be_ok()
 
           execute_test_script(
             "env_variable_output",
@@ -202,6 +202,7 @@ pub fn env_tests() {
         let value = "value"
 
         gleamyshell.set_env(test_environment_variable_identifier, value)
+        |> expect.to_be_ok()
 
         gleamyshell.env(test_environment_variable_identifier)
         |> expect.to_be_ok()
@@ -225,7 +226,7 @@ pub fn set_env_tests() {
       let value = "value"
 
       gleamyshell.set_env(test_environment_variable_identifier, value)
-      |> expect.to_be_true()
+      |> expect.to_be_ok()
 
       gleamyshell.env(test_environment_variable_identifier)
       |> expect.to_be_ok()
@@ -238,7 +239,8 @@ pub fn set_env_tests() {
       let value = "value"
 
       gleamyshell.set_env(identifier, value)
-      |> expect.to_be_false()
+      |> expect.to_be_error()
+      |> expect.to_equal(InvalidIdentifier)
 
       gleamyshell.env(identifier)
       |> expect.to_be_error()
@@ -252,7 +254,7 @@ pub fn unset_env_tests() {
   describe("gleamyshell/unset_env", [
     it("returns true when the environment variable could be unset", fn() {
       gleamyshell.set_env(test_environment_variable_identifier, "value")
-      |> expect.to_be_true()
+      |> expect.to_be_ok()
 
       gleamyshell.unset_env(test_environment_variable_identifier)
       |> expect.to_be_true()
@@ -292,6 +294,10 @@ pub fn which_tests() {
     }),
   ])
 }
+
+const test_scripts_directory = "./test/scripts/"
+
+const test_environment_variable_identifier = "GLEAMYSHELL_TEST_ENV"
 
 fn execute_test_script(
   file_name: String,

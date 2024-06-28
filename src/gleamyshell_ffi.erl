@@ -69,8 +69,8 @@ set_env(Identifier, Value) ->
     os:putenv(binary_to_list(Identifier), binary_to_list(Value)),
 
     case env(Identifier) of
-        {error, _} -> false;
-        {ok, _} -> true
+        {error, _} -> {error, could_not_be_set};
+        Result -> Result
     end.
 
 unset_env(Identifier) ->

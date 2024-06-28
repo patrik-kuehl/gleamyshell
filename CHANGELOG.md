@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+-   **(breaking)** Made `gleamyshell/set_env` return a `Result` instead of a `Bool`.
 -   **(breaking)** Made `gleamyshell/env` return a `Result` instead of an `Option`.
 -   **(breaking)** Made `gleamyshell/home_directory` return a `Result` instead of an `Option`.
 -   **(breaking)** Made `gleamyshell/cwd` return a `Result` instead of an `Option`.

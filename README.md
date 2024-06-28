@@ -3,12 +3,12 @@
 ![Erlang-compatible](https://img.shields.io/badge/target-erlang-a2003e)
 ![JavaScript-compatible](https://img.shields.io/badge/target-javascript-f1e05a)
 
-# GleamyShell
+# GleamyShell 🐚
 
 GleamyShell is a cross-platform Gleam library for executing shell commands that supports all non-browser targets
 (Erlang, Bun, Deno, and Node.js).
 
-## When to use GleamyShell?
+## When to use GleamyShell? 🐚
 
 GleamyShell provides the ability to execute shell commands on multiple targets. While this might sound amazing,
 supporting targets with fundamentally different concurrency models and APIs shrinks the common ground significantly.
@@ -29,7 +29,7 @@ supported targets. Yours might be one of them.
 The main workhorse of GleamyShell is its `execute` function. The remaining functions are quality-of-life features so
 users of this library don't need to reach for further dependencies that often.
 
-## Usage
+## Usage 🐚
 
 ### Getting the current username
 
@@ -69,15 +69,15 @@ case gleamyshell.os() {
 }
 ```
 
-## Changelog
+## Changelog 🐚
 
 Take a look at the [changelog](https://github.com/patrik-kuehl/gleamyshell/blob/main/CHANGELOG.md) to get an overview of
 each release and its changes.
 
-## Contribution Guidelines
+## Contribution Guidelines 🐚
 
 More information can be found [here](https://github.com/patrik-kuehl/gleamyshell/blob/main/CONTRIBUTING.md).
 
-## License
+## License 🐚
 
 GleamyShell is licensed under the [MIT license](https://github.com/patrik-kuehl/gleamyshell/blob/main/LICENSE.md).

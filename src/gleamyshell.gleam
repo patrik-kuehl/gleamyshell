@@ -1,5 +1,4 @@
 import gleam/option.{type Option}
-import gleam/regex
 
 /// Represents information about why a command execution failed.
 pub type CommandError {
@@ -58,15 +57,6 @@ pub type Os {
   SunOs
   /// An operating system not represented by the other options.
   OtherOs(String)
-}
-
-/// Represents the reason why an environment variable could not be set.
-pub type SetEnvironmentVariableError {
-  // The identifier of the environment variable does not match the
-  // `^[a-zA-Z_]+[a-zA-Z0-9_]*$` regex pattern.
-  InvalidIdentifier
-  // The environment variable could not be set.
-  CouldNotBeSet
 }
 
 /// Executes the given command with arguments.
@@ -156,52 +146,6 @@ pub fn home_directory() -> Result(String, Nil)
 @external(javascript, "./gleamyshell_ffi.mjs", "env")
 pub fn env(identifier: String) -> Result(String, Nil)
 
-/// Sets an environment variable.
-/// 
-/// Due to portability and sanity reasons, identifiers of environment variables
-/// must consist solely of digits, letters and underscores, and must not begin
-/// with a digit.
-/// 
-/// In a nutshell, the identifier must match this regex pattern:
-/// `^[a-zA-Z_]+[a-zA-Z0-9_]*$`
-/// 
-/// Nested environment variables won't be resolved due to the limitations of
-/// the APIs of Erlang and Node.js that are responsible for setting environment
-/// variables.
-/// 
-/// ## Example
-/// 
-/// ```gleam
-/// case gleamyshell.set_env(name: "FANCY_ENV", value: "fancy value") {
-///   Ok(value) -> io.println("Value: " <> value)
-///   Error(InvalidIdentifier) -> io.println("Well, let's try another name.")
-///   Error(CouldNotBeSet) -> io.println("It probably wasn't fancy enough.")
-/// }
-/// ```
-pub fn set_env(
-  name identifier: String,
-  value value: String,
-) -> Result(String, SetEnvironmentVariableError) {
-  case is_valid_environment_variable_identifier(identifier) {
-    False -> Error(InvalidIdentifier)
-    True -> set_env_ffi(identifier, value)
-  }
-}
-
-/// Unsets an environment variable.
-/// 
-/// ## Example
-/// 
-/// ```gleam
-/// case gleamyshell.unset_env("DELETE_ME") {
-///   True -> io.println("Bye bye!")
-///   False -> io.println("This shouldn't have happened …")
-/// }
-/// ```
-@external(erlang, "gleamyshell_ffi", "unset_env")
-@external(javascript, "./gleamyshell_ffi.mjs", "unsetEnv")
-pub fn unset_env(identifier: String) -> Bool
-
 /// Returns the location of the given executable if it could be found.
 /// 
 /// ## Example
@@ -215,17 +159,3 @@ pub fn unset_env(identifier: String) -> Bool
 @external(erlang, "gleamyshell_ffi", "which")
 @external(javascript, "./gleamyshell_ffi.mjs", "which")
 pub fn which(executable: String) -> Option(String)
-
-fn is_valid_environment_variable_identifier(identifier: String) -> Bool {
-  case regex.from_string("^[a-zA-Z_]+[a-zA-Z0-9_]*$") {
-    Error(_) -> False
-    Ok(pattern) -> regex.check(with: pattern, content: identifier)
-  }
-}
-
-@external(erlang, "gleamyshell_ffi", "set_env")
-@external(javascript, "./gleamyshell_ffi.mjs", "setEnv")
-fn set_env_ffi(
-  identifier: String,
-  value: String,
-) -> Result(String, SetEnvironmentVariableError)

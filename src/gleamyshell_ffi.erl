@@ -1,5 +1,5 @@
 -module(gleamyshell_ffi).
--export([execute/3, cwd/0, os/0, home_directory/0, env/1, set_env/2, unset_env/1, which/1]).
+-export([execute/3, cwd/0, os/0, home_directory/0, env/1, which/1]).
 
 execute(Executable, WorkingDirectory, Args) ->
     case which(Executable) of
@@ -63,22 +63,6 @@ env(Identifier) ->
     case os:getenv(binary_to_list(Identifier)) of
         false -> {error, nil};
         Value -> {ok, unicode:characters_to_binary(Value, utf8)}
-    end.
-
-set_env(Identifier, Value) ->
-    os:putenv(binary_to_list(Identifier), binary_to_list(Value)),
-
-    case env(Identifier) of
-        {error, _} -> {error, could_not_be_set};
-        Result -> Result
-    end.
-
-unset_env(Identifier) ->
-    os:unsetenv(binary_to_list(Identifier)),
-
-    case env(Identifier) of
-        {error, _} -> true;
-        {ok, _} -> false
     end.
 
 which(Executable) ->

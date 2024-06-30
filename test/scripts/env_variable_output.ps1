@@ -1,1 +1,0 @@
-echo $env:GLEAMYSHELL_TEST_ENV

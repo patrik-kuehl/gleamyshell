@@ -1,7 +1,5 @@
 import gleam/string
-import gleamyshell.{
-  type CommandError, Abort, Enoent, Failure, InvalidIdentifier, Unix, Windows,
-}
+import gleamyshell.{type CommandError, Abort, Enoent, Failure, Unix, Windows}
 import startest.{describe, it}
 import startest/expect
 
@@ -21,36 +19,6 @@ pub fn execute_tests() {
         |> expect.to_be_ok()
         |> string.trim()
         |> expect.to_equal("Hello there!")
-      }),
-      it(
-        "returns expected output with resolved environment variable when it's set",
-        fn() {
-          let value = "Greetings!"
-
-          gleamyshell.set_env(test_environment_variable_identifier, value)
-          |> expect.to_be_ok()
-
-          execute_test_script(
-            test_scripts_directory <> "env_variable_output",
-            in: ".",
-            args: [],
-          )
-          |> expect.to_be_ok()
-          |> string.trim()
-          |> expect.to_equal(value)
-
-          clean_up_environment_variables([test_environment_variable_identifier])
-        },
-      ),
-      it("returns empty output when environment variable is not set", fn() {
-        execute_test_script(
-          test_scripts_directory <> "env_variable_output",
-          in: ".",
-          args: [],
-        )
-        |> expect.to_be_ok()
-        |> string.trim()
-        |> expect.to_equal("")
       }),
       it("returns expected output identical to the passed argument", fn() {
         let value = "test"
@@ -93,36 +61,6 @@ pub fn execute_tests() {
         |> expect.to_be_ok()
         |> string.trim()
         |> expect.to_equal("Hello there!")
-      }),
-      it(
-        "returns expected output with resolved environment variable when it's set",
-        fn() {
-          let value = "Greetings!"
-
-          gleamyshell.set_env(test_environment_variable_identifier, value)
-          |> expect.to_be_ok()
-
-          execute_test_script(
-            "env_variable_output",
-            in: test_scripts_directory,
-            args: [],
-          )
-          |> expect.to_be_ok()
-          |> string.trim()
-          |> expect.to_equal(value)
-
-          clean_up_environment_variables([test_environment_variable_identifier])
-        },
-      ),
-      it("returns empty output when environment variable is not set", fn() {
-        execute_test_script(
-          "env_variable_output",
-          in: test_scripts_directory,
-          args: [],
-        )
-        |> expect.to_be_ok()
-        |> string.trim()
-        |> expect.to_equal("")
       }),
       it("returns expected output identical to the passed argument", fn() {
         let value = "test"
@@ -199,68 +137,24 @@ pub fn env_tests() {
     it(
       "returns the value of the given environment variable when it exists",
       fn() {
-        let value = "value"
+        let path =
+          execute_test_script(
+            test_scripts_directory <> "path_env_output",
+            in: ".",
+            args: [],
+          )
+          |> expect.to_be_ok()
+          |> string.trim()
 
-        gleamyshell.set_env(test_environment_variable_identifier, value)
+        gleamyshell.env("PATH")
         |> expect.to_be_ok()
-
-        gleamyshell.env(test_environment_variable_identifier)
-        |> expect.to_be_ok()
-        |> expect.to_equal(value)
-
-        clean_up_environment_variables([test_environment_variable_identifier])
+        |> expect.to_equal(path)
       },
     ),
     it(
-      "returns nothing when the given environment variable does not exist",
-      fn() {
-        expect.to_be_error(gleamyshell.env(test_environment_variable_identifier))
-      },
+      "returns an error when the given environment variable does not exist",
+      fn() { expect.to_be_error(gleamyshell.env("i_dont_exist")) },
     ),
-  ])
-}
-
-pub fn set_env_tests() {
-  describe("gleamyshell/set_env", [
-    it("returns true when the environment variable could be set", fn() {
-      let value = "value"
-
-      gleamyshell.set_env(test_environment_variable_identifier, value)
-      |> expect.to_be_ok()
-
-      gleamyshell.env(test_environment_variable_identifier)
-      |> expect.to_be_ok()
-      |> expect.to_equal(value)
-
-      clean_up_environment_variables([test_environment_variable_identifier])
-    }),
-    it("returns false when the environment variable could not be set", fn() {
-      let identifier = "123GLEAMYSHELL_TEST_ENV"
-      let value = "value"
-
-      gleamyshell.set_env(identifier, value)
-      |> expect.to_be_error()
-      |> expect.to_equal(InvalidIdentifier)
-
-      gleamyshell.env(identifier)
-      |> expect.to_be_error()
-
-      clean_up_environment_variables([identifier])
-    }),
-  ])
-}
-
-pub fn unset_env_tests() {
-  describe("gleamyshell/unset_env", [
-    it("returns true when the environment variable could be unset", fn() {
-      gleamyshell.set_env(test_environment_variable_identifier, "value")
-      |> expect.to_be_ok()
-
-      gleamyshell.unset_env(test_environment_variable_identifier)
-      |> expect.to_be_true()
-
-      clean_up_environment_variables([test_environment_variable_identifier])
-    }),
   ])
 }
 
@@ -297,8 +191,6 @@ pub fn which_tests() {
 
 const test_scripts_directory = "./test/scripts/"
 
-const test_environment_variable_identifier = "GLEAMYSHELL_TEST_ENV"
-
 fn execute_test_script(
   file_name: String,
   in working_directory: String,
@@ -315,16 +207,5 @@ fn execute_test_script(
         "./" <> file_name <> ".sh",
         ..args
       ])
-  }
-}
-
-fn clean_up_environment_variables(identifiers: List(String)) -> Nil {
-  case identifiers {
-    [] -> Nil
-    [identifier, ..rest] -> {
-      gleamyshell.unset_env(identifier)
-
-      clean_up_environment_variables(rest)
-    }
   }
 }

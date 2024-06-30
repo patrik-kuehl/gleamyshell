@@ -22,7 +22,6 @@ import {
     Eacces,
     Enoent,
     OtherAbortReason,
-    CouldNotBeSet,
 } from "./gleamyshell.mjs"
 
 export function execute(executable, workingDirectory, args) {
@@ -74,18 +73,6 @@ export function env(identifier) {
     const value = process.env[identifier]
 
     return value == null ? new Error(null) : new Ok(value)
-}
-
-export function setEnv(identifier, value) {
-    process.env[identifier] = value
-
-    return process.env[identifier] == null ? new Error(new CouldNotBeSet()) : new Ok(process.env[identifier])
-}
-
-export function unsetEnv(identifier) {
-    delete process.env[identifier]
-
-    return process.env[identifier] == null
 }
 
 export function which(executable) {

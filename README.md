@@ -31,7 +31,7 @@ users of this library don't need to reach for further dependencies that often.
 
 ## Usage 🐚
 
-### Getting the current username
+### Getting the current username 🐚
 
 ```gleam
 case gleamyshell.execute("whoami", in: ".", args: []) {
@@ -48,7 +48,7 @@ case gleamyshell.execute("whoami", in: ".", args: []) {
 }
 ```
 
-### Getting the current working directory
+### Getting the current working directory 🐚
 
 ```gleam
 case gleamyshell.cwd() {
@@ -59,7 +59,7 @@ case gleamyshell.cwd() {
 }
 ```
 
-### Choosing what to do depending on the operating system
+### Choosing what to do depending on the operating system 🐚
 
 ```gleam
 case gleamyshell.os() {

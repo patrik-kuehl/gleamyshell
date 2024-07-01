@@ -1,5 +1,3 @@
-import gleam/option.{type Option}
-
 /// Represents information about why a command execution failed.
 pub type CommandError {
   /// The command could be executed but returned a non-zero exit code.
@@ -152,10 +150,10 @@ pub fn env(identifier: String) -> Result(String, Nil)
 /// 
 /// ```gleam
 /// case gleamyshell.which("git") {
-///   Some(_) -> io.println("Doing something with Git.")
-///   None -> io.println("Git could not be found.")
+///   Ok(_) -> io.println("Doing something with Git.")
+///   Error(_) -> io.println("Git could not be found.")
 /// }
 /// ```
 @external(erlang, "gleamyshell_ffi", "which")
 @external(javascript, "./gleamyshell_ffi.mjs", "which")
-pub fn which(executable: String) -> Option(String)
+pub fn which(executable: String) -> Result(String, Nil)

@@ -2,7 +2,6 @@ import child_process from "node:child_process"
 import process from "node:process"
 import { default as operating_system } from "node:os"
 import { Ok, Error, isEqual } from "./gleam.mjs"
-import { Some, None } from "../gleam_stdlib/gleam/option.mjs"
 import {
     Windows,
     Unix,
@@ -25,7 +24,7 @@ import {
 } from "./gleamyshell.mjs"
 
 export function execute(executable, workingDirectory, args) {
-    if (isEqual(which(executable), new None())) {
+    if (isEqual(which(executable), new Error(null))) {
         return new Error(new Abort(new Enoent()))
     }
 
@@ -84,8 +83,8 @@ export function which(executable) {
         : spawnSync(unixArgs[0], [unixArgs[1]], ".")
 
     return result.status === 0 && result.stdout != null && result.stdout.toString().trim() !== ""
-        ? new Some(result.stdout.toString().trim())
-        : new None()
+        ? new Ok(result.stdout.toString().trim())
+        : new Error(null)
 }
 
 function spawnSync(executable, args, workingDirectory) {

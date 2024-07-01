@@ -3,9 +3,9 @@
 
 execute(Executable, WorkingDirectory, Args) ->
     case which(Executable) of
-        none ->
+        {error, _} ->
             {error, {abort, enoent}};
-        {some, ExecutablePath} ->
+        {ok, ExecutablePath} ->
             try
                 do_execute(ExecutablePath, WorkingDirectory, Args)
             catch
@@ -67,9 +67,9 @@ env(Identifier) ->
 
 which(Executable) ->
     case {os(), os:find_executable(binary_to_list(Executable))} of
-        {_, false} -> none;
-        {{unix, _}, Dir} -> {some, unicode:characters_to_binary(Dir, utf8)};
-        {windows, Dir} -> {some, sanitize_path_on_windows(Dir)}
+        {_, false} -> {error, nil};
+        {{unix, _}, Dir} -> {ok, unicode:characters_to_binary(Dir, utf8)};
+        {windows, Dir} -> {ok, sanitize_path_on_windows(Dir)}
     end.
 
 do_execute(ExecutablePath, WorkingDirectory, Args) ->

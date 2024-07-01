@@ -173,18 +173,18 @@ pub fn which_tests() {
       case gleamyshell.os() {
         Windows ->
           gleamyshell.which("cmd")
-          |> expect.to_be_some()
+          |> expect.to_be_ok()
           |> expect.to_equal(executable_path)
         Unix(_) ->
           gleamyshell.which("sh")
-          |> expect.to_be_some()
+          |> expect.to_be_ok()
           |> expect.to_equal(executable_path)
       }
 
       Nil
     }),
-    it("returns nothing when the given executable could not be found", fn() {
-      expect.to_be_none(gleamyshell.which("_whoami_"))
+    it("returns an error when the given executable could not be found", fn() {
+      expect.to_be_error(gleamyshell.which("_whoami_"))
     }),
   ])
 }

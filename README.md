@@ -69,6 +69,21 @@ case gleamyshell.os() {
 }
 ```
 
+## Upgrading to Version 2 🐚
+
+The changelog covers the breaking changes and the API documentation has been updated accordingly.
+
+In a nutshell:
+
+-   `gleamyshell/set_env` and `gleamyshell/unset_env` have been removed due to the limitations of the APIs of Erlang and
+    Node.js (e.g., referenced variables couldn't be resolved as one might expect it to happen when using the shell
+    directly), so if you need to set and/or unset environment variables, do it in a platform-specific way within a
+    script file instead
+-   all functions, which returned an `Option` now return a `Result` to provide an API that is adhering to Gleam's
+    guidelines (thus becoming more idiomatic) to prefer `Result` over `Option` for failible functions
+-   `gleamyshell/execute` doesn't treat non-zero exit codes as errors any longer because for GleamyShell, a command that
+    could exit, no matter the exit code, did complete successfully
+
 ## Changelog 🐚
 
 Take a look at the [changelog](https://github.com/patrik-kuehl/gleamyshell/blob/main/CHANGELOG.md) to get an overview of

@@ -60,7 +60,7 @@ sure to add notable changes to the changelog before submitting a pull request.
 
 |            Dependency            | Version  |
 | :------------------------------: | :------: |
-|   [Gleam](https://gleam.run/)    |  == 1.2  |
+|   [Gleam](https://gleam.run/)    |  == 1.3  |
 |      [Bun](https://bun.sh/)      | \>= 1.0  |
 |    [Deno](https://deno.com/)     | \>= 1.0  |
 | [Node.js](https://nodejs.org/)\* | \>= 20.0 |

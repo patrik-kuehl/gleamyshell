@@ -1,5 +1,5 @@
 import gleam/string
-import gleamyshell.{type CommandError, Abort, Enoent, Failure, Unix, Windows}
+import gleamyshell.{type CommandOutput, CommandOutput, Unix, Windows}
 import startest.{describe, it}
 import startest/expect
 
@@ -11,88 +11,92 @@ pub fn execute_tests() {
   describe("gleamyshell/execute", [
     describe("in working directory \".\"", [
       it("returns expected output when command succeeded", fn() {
-        execute_test_script(
-          test_scripts_directory <> "greeting",
-          in: ".",
-          args: [],
-        )
-        |> expect.to_be_ok()
+        let assert CommandOutput(0, output) =
+          execute_test_script(
+            test_scripts_directory <> "greeting",
+            in: ".",
+            args: [],
+          )
+          |> expect.to_be_ok()
+
+        output
         |> string.trim()
         |> expect.to_equal("Hello there!")
       }),
       it("returns expected output identical to the passed argument", fn() {
         let value = "test"
 
-        execute_test_script(
-          test_scripts_directory <> "argument",
-          in: ".",
-          args: [value],
-        )
-        |> expect.to_be_ok()
+        let assert CommandOutput(0, output) =
+          execute_test_script(
+            test_scripts_directory <> "argument",
+            in: ".",
+            args: [value],
+          )
+          |> expect.to_be_ok()
+
+        output
         |> string.trim()
         |> expect.to_equal(value)
       }),
       it("returns ENOENT error", fn() {
         gleamyshell.execute("_whoami_", in: ".", args: [])
         |> expect.to_be_error()
-        |> expect.to_equal(Abort(Enoent))
+        |> expect.to_equal("enoent")
       }),
       it("returns expected output when command failed", fn() {
-        let failure =
+        let assert CommandOutput(1, output) =
           execute_test_script(
             test_scripts_directory <> "failed_command",
             in: ".",
             args: [],
           )
-          |> expect.to_be_error()
+          |> expect.to_be_ok()
 
-        case failure {
-          Failure(output, _) ->
-            output
-            |> string.trim()
-            |> expect.to_equal("Nothing to worry about.")
-          _ -> panic as "Did not expect the command to abort."
-        }
+        output
+        |> string.trim()
+        |> expect.to_equal("Nothing to worry about.")
       }),
     ]),
     describe("in working directory \"" <> test_scripts_directory <> "\"", [
       it("returns expected output when command succeeded", fn() {
-        execute_test_script("greeting", in: test_scripts_directory, args: [])
-        |> expect.to_be_ok()
+        let assert CommandOutput(0, output) =
+          execute_test_script("greeting", in: test_scripts_directory, args: [])
+          |> expect.to_be_ok()
+
+        output
         |> string.trim()
         |> expect.to_equal("Hello there!")
       }),
       it("returns expected output identical to the passed argument", fn() {
         let value = "test"
 
-        execute_test_script("argument", in: test_scripts_directory, args: [
-          value,
-        ])
-        |> expect.to_be_ok()
+        let assert CommandOutput(0, output) =
+          execute_test_script("argument", in: test_scripts_directory, args: [
+            value,
+          ])
+          |> expect.to_be_ok()
+
+        output
         |> string.trim()
         |> expect.to_equal(value)
       }),
       it("returns ENOENT error", fn() {
         gleamyshell.execute("_whoami_", in: test_scripts_directory, args: [])
         |> expect.to_be_error()
-        |> expect.to_equal(Abort(Enoent))
+        |> expect.to_equal("enoent")
       }),
       it("returns expected output when command failed", fn() {
-        let failure =
+        let assert CommandOutput(1, output) =
           execute_test_script(
             "failed_command",
             in: test_scripts_directory,
             args: [],
           )
-          |> expect.to_be_error()
+          |> expect.to_be_ok()
 
-        case failure {
-          Failure(output, _) ->
-            output
-            |> string.trim()
-            |> expect.to_equal("Nothing to worry about.")
-          _ -> panic as "Did not expect the command to abort."
-        }
+        output
+        |> string.trim()
+        |> expect.to_equal("Nothing to worry about.")
       }),
     ]),
   ])
@@ -101,14 +105,13 @@ pub fn execute_tests() {
 pub fn cwd_tests() {
   describe("gleamyshell/cwd", [
     it("returns the current working directory", fn() {
-      let cwd =
+      let CommandOutput(_, cwd) =
         execute_test_script(test_scripts_directory <> "pwd", in: ".", args: [])
         |> expect.to_be_ok()
-        |> string.trim()
 
       gleamyshell.cwd()
       |> expect.to_be_ok()
-      |> expect.to_equal(cwd)
+      |> expect.to_equal(cwd |> string.trim())
     }),
   ])
 }
@@ -116,18 +119,17 @@ pub fn cwd_tests() {
 pub fn home_directory_tests() {
   describe("gleamyshell/home_directory", [
     it("returns the home directory of the current user", fn() {
-      let home_directory =
+      let CommandOutput(_, home_directory) =
         execute_test_script(
           test_scripts_directory <> "home_directory",
           in: ".",
           args: [],
         )
         |> expect.to_be_ok()
-        |> string.trim()
 
       gleamyshell.home_directory()
       |> expect.to_be_ok()
-      |> expect.to_equal(home_directory)
+      |> expect.to_equal(home_directory |> string.trim())
     }),
   ])
 }
@@ -137,18 +139,17 @@ pub fn env_tests() {
     it(
       "returns the value of the given environment variable when it exists",
       fn() {
-        let path =
+        let CommandOutput(_, path) =
           execute_test_script(
             test_scripts_directory <> "path_env_output",
             in: ".",
             args: [],
           )
           |> expect.to_be_ok()
-          |> string.trim()
 
         gleamyshell.env("PATH")
         |> expect.to_be_ok()
-        |> expect.to_equal(path)
+        |> expect.to_equal(path |> string.trim())
       },
     ),
     it(
@@ -161,24 +162,23 @@ pub fn env_tests() {
 pub fn which_tests() {
   describe("gleamyshell/which", [
     it("returns the path of the given executable when it could be found", fn() {
-      let executable_path =
+      let CommandOutput(_, executable_path) =
         execute_test_script(
           test_scripts_directory <> "which",
           in: ".",
           args: [],
         )
         |> expect.to_be_ok()
-        |> string.trim()
 
       case gleamyshell.os() {
         Windows ->
           gleamyshell.which("cmd")
           |> expect.to_be_ok()
-          |> expect.to_equal(executable_path)
+          |> expect.to_equal(executable_path |> string.trim())
         Unix(_) ->
           gleamyshell.which("sh")
           |> expect.to_be_ok()
-          |> expect.to_equal(executable_path)
+          |> expect.to_equal(executable_path |> string.trim())
       }
 
       Nil
@@ -195,7 +195,7 @@ fn execute_test_script(
   file_name: String,
   in working_directory: String,
   args args: List(String),
-) -> Result(String, CommandError) {
+) -> Result(CommandOutput, String) {
   case gleamyshell.os() {
     Windows ->
       gleamyshell.execute("powershell", in: working_directory, args: [

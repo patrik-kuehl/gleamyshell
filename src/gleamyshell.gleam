@@ -1,33 +1,11 @@
-/// Represents information about why a command execution failed.
-pub type CommandError {
-  /// The command could be executed but returned a non-zero exit code.
-  Failure(output: String, exit_code: Int)
-  /// The command could not be executed completely and was aborted. You usually
-  /// don't want to pattern match the specific reason and when targeting Bun,
-  /// you won't receive any reason besides `Enoent` due to Bun's limitations here.
-  Abort(reason: AbortReason)
-}
-
-/// Represents the reason why the execution of a command was aborted.
-///
-/// Most of these reasons are common POSIX errors.
-pub type AbortReason {
-  /// Not enough memory.
-  Enomem
-  /// Resource temporarily unavailable.
-  Eagain
-  /// Too long file name.
-  Enametoolong
-  /// Too many open files.
-  Emfile
-  /// File table overflow.
-  Enfile
-  /// Insufficient permissions.
-  Eacces
-  /// No such file or directory.
-  Enoent
-  /// An error not represented by the other options.
-  OtherAbortReason(String)
+/// Represents information about the exit code and output of the
+/// executed command.
+/// 
+/// `output` equals the output stream (stdout) when the command
+/// exited with an exit code of one, otherwise it equals the
+/// error stream (stderr).
+pub type CommandOutput {
+  CommandOutput(exit_code: Int, output: String)
 }
 
 /// Represents families of operating systems.
@@ -63,16 +41,16 @@ pub type Os {
 /// 
 /// ```gleam
 /// case gleamyshell.execute("whoami", in: ".", args: []) {
-///   Ok(username) ->
+///   Ok(CommandOutput(0, username)) ->
 ///     io.println("Hello there, " <> string.trim(username) <> "!")
-///   Error(Failure(output, exit_code)) ->
+///   Ok(CommandOutput(exit_code, output)) ->
 ///     io.println(
 ///       "Whoops!\nError ("
 ///       <> int.to_string(exit_code)
 ///       <> "): "
 ///       <> string.trim(output),
 ///     )
-///   Error(Abort(_)) -> io.println("Something went terribly wrong.")
+///   Error(reason) -> io.println("Fatal: " <> reason)
 /// }
 /// ```
 @external(erlang, "gleamyshell_ffi", "execute")
@@ -81,7 +59,7 @@ pub fn execute(
   executable: String,
   in working_directory: String,
   args args: List(String),
-) -> Result(String, CommandError)
+) -> Result(CommandOutput, String)
 
 /// Returns the current working directory.
 /// 

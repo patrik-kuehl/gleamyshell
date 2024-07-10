@@ -31,24 +31,24 @@ users of this library don't need to reach for further dependencies that often.
 
 ## Usage 🐚
 
-### Getting the current username 🐚
+### Getting the Current Username 🐚
 
 ```gleam
 case gleamyshell.execute("whoami", in: ".", args: []) {
-  Ok(username) ->
+  Ok(CommandOutput(0, username)) ->
     io.println("Hello there, " <> string.trim(username) <> "!")
-  Error(Failure(output, exit_code)) ->
+  Ok(CommandOutput(exit_code, output)) ->
     io.println(
       "Whoops!\nError ("
       <> int.to_string(exit_code)
       <> "): "
       <> string.trim(output),
     )
-  Error(Abort(_)) -> io.println("Something went terribly wrong.")
+  Error(reason) -> io.println("Fatal: " <> reason)
 }
 ```
 
-### Getting the current working directory 🐚
+### Getting the Current Working Directory 🐚
 
 ```gleam
 case gleamyshell.cwd() {
@@ -59,7 +59,7 @@ case gleamyshell.cwd() {
 }
 ```
 
-### Choosing what to do depending on the operating system 🐚
+### Do OS-specific Stuff 🐚
 
 ```gleam
 case gleamyshell.os() {

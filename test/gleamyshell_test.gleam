@@ -1,192 +1,150 @@
 import gleam/string
-import gleamyshell.{type CommandError, Abort, Enoent, Failure, Unix, Windows}
-import startest.{describe, it}
-import startest/expect
+import gleamyshell.{type CommandOutput, CommandOutput, Unix, Windows}
+import gleeunit
+import gleeunit/should
 
 pub fn main() {
-  startest.run(startest.default_config())
+  gleeunit.main()
 }
 
-pub fn execute_tests() {
-  describe("gleamyshell/execute", [
-    describe("in working directory \".\"", [
-      it("returns expected output when command succeeded", fn() {
-        execute_test_script(
-          test_scripts_directory <> "greeting",
-          in: ".",
-          args: [],
-        )
-        |> expect.to_be_ok()
-        |> string.trim()
-        |> expect.to_equal("Hello there!")
-      }),
-      it("returns expected output identical to the passed argument", fn() {
-        let value = "test"
+pub fn execute_test() {
+  let assert CommandOutput(0, output) =
+    execute_test_script(test_scripts_directory <> "greeting", in: ".", args: [])
+    |> should.be_ok()
 
-        execute_test_script(
-          test_scripts_directory <> "argument",
-          in: ".",
-          args: [value],
-        )
-        |> expect.to_be_ok()
-        |> string.trim()
-        |> expect.to_equal(value)
-      }),
-      it("returns ENOENT error", fn() {
-        gleamyshell.execute("_whoami_", in: ".", args: [])
-        |> expect.to_be_error()
-        |> expect.to_equal(Abort(Enoent))
-      }),
-      it("returns expected output when command failed", fn() {
-        let failure =
-          execute_test_script(
-            test_scripts_directory <> "failed_command",
-            in: ".",
-            args: [],
-          )
-          |> expect.to_be_error()
+  output
+  |> string.trim()
+  |> should.equal("Hello there!")
+  |> because("it equals the stdout of the command")
 
-        case failure {
-          Failure(output, _) ->
-            output
-            |> string.trim()
-            |> expect.to_equal("Nothing to worry about.")
-          _ -> panic as "Did not expect the command to abort."
-        }
-      }),
-    ]),
-    describe("in working directory \"" <> test_scripts_directory <> "\"", [
-      it("returns expected output when command succeeded", fn() {
-        execute_test_script("greeting", in: test_scripts_directory, args: [])
-        |> expect.to_be_ok()
-        |> string.trim()
-        |> expect.to_equal("Hello there!")
-      }),
-      it("returns expected output identical to the passed argument", fn() {
-        let value = "test"
+  let value = "test"
 
-        execute_test_script("argument", in: test_scripts_directory, args: [
-          value,
-        ])
-        |> expect.to_be_ok()
-        |> string.trim()
-        |> expect.to_equal(value)
-      }),
-      it("returns ENOENT error", fn() {
-        gleamyshell.execute("_whoami_", in: test_scripts_directory, args: [])
-        |> expect.to_be_error()
-        |> expect.to_equal(Abort(Enoent))
-      }),
-      it("returns expected output when command failed", fn() {
-        let failure =
-          execute_test_script(
-            "failed_command",
-            in: test_scripts_directory,
-            args: [],
-          )
-          |> expect.to_be_error()
+  let assert CommandOutput(0, output) =
+    execute_test_script(test_scripts_directory <> "argument", in: ".", args: [
+      value,
+    ])
+    |> should.be_ok()
 
-        case failure {
-          Failure(output, _) ->
-            output
-            |> string.trim()
-            |> expect.to_equal("Nothing to worry about.")
-          _ -> panic as "Did not expect the command to abort."
-        }
-      }),
-    ]),
-  ])
+  output
+  |> string.trim()
+  |> should.equal(value)
+  |> because("the passed argument is identical to the stdout of the command")
+
+  gleamyshell.execute("_whoami_", in: ".", args: [])
+  |> should.be_error()
+  |> should.equal("enoent")
+  |> because("the executable could not be found")
+
+  let assert CommandOutput(1, output) =
+    execute_test_script(
+      test_scripts_directory <> "failed_command",
+      in: ".",
+      args: [],
+    )
+    |> should.be_ok()
+
+  output
+  |> string.trim()
+  |> should.equal("Nothing to worry about.")
+  |> because("it equals the stderr of the command")
+
+  let assert CommandOutput(0, output) =
+    execute_test_script("greeting", in: test_scripts_directory, args: [])
+    |> should.be_ok()
+    |> because("it equals the stdout of the command")
+
+  output
+  |> string.trim()
+  |> should.equal("Hello there!")
+
+  let value = "test"
+
+  let assert CommandOutput(0, output) =
+    execute_test_script("argument", in: test_scripts_directory, args: [value])
+    |> should.be_ok()
+
+  output
+  |> string.trim()
+  |> should.equal(value)
+  |> because("the passed argument is identical to the stdout of the command")
+
+  gleamyshell.execute("_whoami_", in: test_scripts_directory, args: [])
+  |> should.be_error()
+  |> should.equal("enoent")
+  |> because("the executable could not be found")
+
+  let assert CommandOutput(1, output) =
+    execute_test_script("failed_command", in: test_scripts_directory, args: [])
+    |> should.be_ok()
+
+  output
+  |> string.trim()
+  |> should.equal("Nothing to worry about.")
+  |> because("it equals the stderr of the command")
 }
 
-pub fn cwd_tests() {
-  describe("gleamyshell/cwd", [
-    it("returns the current working directory", fn() {
-      let cwd =
-        execute_test_script(test_scripts_directory <> "pwd", in: ".", args: [])
-        |> expect.to_be_ok()
-        |> string.trim()
+pub fn cwd_test() {
+  let CommandOutput(_, cwd) =
+    execute_test_script(test_scripts_directory <> "pwd", in: ".", args: [])
+    |> should.be_ok()
 
-      gleamyshell.cwd()
-      |> expect.to_be_ok()
-      |> expect.to_equal(cwd)
-    }),
-  ])
+  gleamyshell.cwd()
+  |> should.be_ok()
+  |> should.equal(cwd |> string.trim())
 }
 
-pub fn home_directory_tests() {
-  describe("gleamyshell/home_directory", [
-    it("returns the home directory of the current user", fn() {
-      let home_directory =
-        execute_test_script(
-          test_scripts_directory <> "home_directory",
-          in: ".",
-          args: [],
-        )
-        |> expect.to_be_ok()
-        |> string.trim()
+pub fn home_directory_test() {
+  let CommandOutput(_, home_directory) =
+    execute_test_script(
+      test_scripts_directory <> "home_directory",
+      in: ".",
+      args: [],
+    )
+    |> should.be_ok()
 
-      gleamyshell.home_directory()
-      |> expect.to_be_ok()
-      |> expect.to_equal(home_directory)
-    }),
-  ])
+  gleamyshell.home_directory()
+  |> should.be_ok()
+  |> should.equal(home_directory |> string.trim())
 }
 
-pub fn env_tests() {
-  describe("gleamyshell/env", [
-    it(
-      "returns the value of the given environment variable when it exists",
-      fn() {
-        let path =
-          execute_test_script(
-            test_scripts_directory <> "path_env_output",
-            in: ".",
-            args: [],
-          )
-          |> expect.to_be_ok()
-          |> string.trim()
+pub fn env_test() {
+  let CommandOutput(_, path) =
+    execute_test_script(
+      test_scripts_directory <> "path_env_output",
+      in: ".",
+      args: [],
+    )
+    |> should.be_ok()
 
-        gleamyshell.env("PATH")
-        |> expect.to_be_ok()
-        |> expect.to_equal(path)
-      },
-    ),
-    it(
-      "returns an error when the given environment variable does not exist",
-      fn() { expect.to_be_error(gleamyshell.env("i_dont_exist")) },
-    ),
-  ])
+  gleamyshell.env("PATH")
+  |> should.be_ok()
+  |> should.equal(path |> string.trim())
+  |> because("the environment variable exists")
+
+  gleamyshell.env("i_dont_exist")
+  |> should.be_error()
+  |> because("the environment variable does not exist")
 }
 
-pub fn which_tests() {
-  describe("gleamyshell/which", [
-    it("returns the path of the given executable when it could be found", fn() {
-      let executable_path =
-        execute_test_script(
-          test_scripts_directory <> "which",
-          in: ".",
-          args: [],
-        )
-        |> expect.to_be_ok()
-        |> string.trim()
+pub fn which_test() {
+  let CommandOutput(_, executable_path) =
+    execute_test_script(test_scripts_directory <> "which", in: ".", args: [])
+    |> should.be_ok()
 
-      case gleamyshell.os() {
-        Windows ->
-          gleamyshell.which("cmd")
-          |> expect.to_be_ok()
-          |> expect.to_equal(executable_path)
-        Unix(_) ->
-          gleamyshell.which("sh")
-          |> expect.to_be_ok()
-          |> expect.to_equal(executable_path)
-      }
+  case gleamyshell.os() {
+    Windows ->
+      gleamyshell.which("cmd")
+      |> should.be_ok()
+    Unix(_) ->
+      gleamyshell.which("sh")
+      |> should.be_ok()
+  }
+  |> should.equal(executable_path |> string.trim())
+  |> because("the executable could be found")
 
-      Nil
-    }),
-    it("returns an error when the given executable could not be found", fn() {
-      expect.to_be_error(gleamyshell.which("_whoami_"))
-    }),
-  ])
+  gleamyshell.which("_whoami_")
+  |> should.be_error()
+  |> because("the executable could not be found")
 }
 
 const test_scripts_directory = "./test/scripts/"
@@ -195,7 +153,7 @@ fn execute_test_script(
   file_name: String,
   in working_directory: String,
   args args: List(String),
-) -> Result(String, CommandError) {
+) -> Result(CommandOutput, String) {
   case gleamyshell.os() {
     Windows ->
       gleamyshell.execute("powershell", in: working_directory, args: [
@@ -208,4 +166,8 @@ fn execute_test_script(
         ..args
       ])
   }
+}
+
+fn because(assertion_result: a, _description: String) -> a {
+  assertion_result
 }

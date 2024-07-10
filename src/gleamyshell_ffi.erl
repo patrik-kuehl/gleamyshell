@@ -4,29 +4,12 @@
 execute(Executable, WorkingDirectory, Args) ->
     case which(Executable) of
         {error, _} ->
-            {error, {abort, enoent}};
+            {error, atom_to_binary(enoent, utf8)};
         {ok, ExecutablePath} ->
             try
                 do_execute(ExecutablePath, WorkingDirectory, Args)
             catch
-                _:Reason ->
-                    case Reason of
-                        enomem ->
-                            {error, {abort, enomem}};
-                        eagain ->
-                            {error, {abort, eagain}};
-                        enametoolong ->
-                            {error, {abort, enametoolong}};
-                        emfile ->
-                            {error, {abort, emfile}};
-                        enfile ->
-                            {error, {abort, enfile}};
-                        eacces ->
-                            {error, {abort, eacces}};
-                        OtherReason ->
-                            {error,
-                                {abort, {other_abort_reason, atom_to_binary(OtherReason, utf8)}}}
-                    end
+                _:Reason -> {error, atom_to_binary(Reason, utf8)}
             end
     end.
 
@@ -87,10 +70,8 @@ do_execute(ExecutablePath, WorkingDirectory, Args) ->
     ),
 
     case port_result(Port, []) of
-        {Output, 0} ->
-            {ok, unicode:characters_to_binary(Output, utf8)};
         {Output, ExitCode} ->
-            {error, {failure, unicode:characters_to_binary(Output, utf8), ExitCode}}
+            {ok, {command_output, ExitCode, unicode:characters_to_binary(Output, utf8)}}
     end.
 
 port_result(Port, IntermediateOutput) ->

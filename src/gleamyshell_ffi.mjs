@@ -2,33 +2,14 @@ import child_process from "node:child_process"
 import process from "node:process"
 import { default as operating_system } from "node:os"
 import { Ok, Error, isEqual } from "./gleam.mjs"
-import {
-    Windows,
-    Unix,
-    Darwin,
-    FreeBsd,
-    OpenBsd,
-    Linux,
-    SunOs,
-    OtherOs,
-    Failure,
-    Abort,
-    Enomem,
-    Eagain,
-    Enametoolong,
-    Emfile,
-    Enfile,
-    Eacces,
-    Enoent,
-    OtherAbortReason,
-} from "./gleamyshell.mjs"
+import { Windows, Unix, Darwin, FreeBsd, OpenBsd, Linux, SunOs, OtherOs, CommandOutput } from "./gleamyshell.mjs"
 
 export function execute(executable, workingDirectory, args) {
     if (isEqual(which(executable), new Error(null))) {
-        return new Error(new Abort(new Enoent()))
+        return new Error("enoent")
     }
 
-    return childProcessResultToGleamResult(spawnSync(executable, args.toArray(), workingDirectory))
+    return spawnSync(executable, args.toArray(), workingDirectory)
 }
 
 export function cwd() {
@@ -78,13 +59,13 @@ export function which(executable) {
     const windowsArgs = ["powershell", `(gcm ${executable}).Path`]
     const unixArgs = ["which", executable]
 
-    let result = isEqual(os(), new Windows())
+    const result = isEqual(os(), new Windows())
         ? spawnSync(windowsArgs[0], [windowsArgs[1]], ".")
         : spawnSync(unixArgs[0], [unixArgs[1]], ".")
 
-    return result.status === 0 && result.stdout != null && result.stdout.toString().trim() !== ""
-        ? new Ok(result.stdout.toString().trim())
-        : new Error(null)
+    const output = result[0].output.trim()
+
+    return result[0].exit_code === 0 && output !== "" ? new Ok(output) : new Error(null)
 }
 
 function spawnSync(executable, args, workingDirectory) {
@@ -99,36 +80,15 @@ function spawnSync(executable, args, workingDirectory) {
         if (result.exitCode != null) {
             result.status = result.exitCode
         }
-    } catch {}
-
-    return result
-}
-
-function childProcessResultToGleamResult(result) {
-    if (result.status === 0) {
-        return new Ok(result.stdout?.toString() ?? "")
+    } catch (error) {
+        return new Error(error.toString())
     }
 
-    if (result.status != null) {
-        return new Error(new Failure(result.stderr?.toString() ?? "", result.status))
+    if (result.error?.code != null) {
+        return new Error(result.error.code.toLowerCase())
     }
 
-    const error_code = result.error?.code ?? ""
-
-    switch (error_code) {
-        case "ENOMEM":
-            return new Error(new Abort(new Enomem()))
-        case "EAGAIN":
-            return new Error(new Abort(new Eagain()))
-        case "ENAMETOOLONG":
-            return new Error(new Abort(new Enametoolong()))
-        case "EMFILE":
-            return new Error(new Abort(new Emfile()))
-        case "ENFILE":
-            return new Error(new Abort(new Enfile()))
-        case "EACCES":
-            return new Error(new Abort(new Eacces()))
-        default:
-            return new Error(new Abort(new OtherAbortReason(error_code)))
-    }
+    return new Ok(
+        new CommandOutput(result.status, result.status === 0 ? result.stdout.toString() : result.stderr.toString()),
+    )
 }

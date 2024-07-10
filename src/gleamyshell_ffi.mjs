@@ -59,11 +59,13 @@ export function which(executable) {
     const windowsArgs = ["powershell", `(gcm ${executable}).Path`]
     const unixArgs = ["which", executable]
 
-    let result = isEqual(os(), new Windows())
+    const result = isEqual(os(), new Windows())
         ? spawnSync(windowsArgs[0], [windowsArgs[1]], ".")
         : spawnSync(unixArgs[0], [unixArgs[1]], ".")
 
-    return result[0].exit_code === 0 ? new Ok(result[0].output.trim()) : new Error(null)
+    const output = result[0].output.trim()
+
+    return result[0].exit_code === 0 && output !== "" ? new Ok(output) : new Error(null)
 }
 
 function spawnSync(executable, args, workingDirectory) {

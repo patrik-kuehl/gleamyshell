@@ -59,7 +59,7 @@ case gleamyshell.cwd() {
 }
 ```
 
-### Do OS-specific Stuff 🐚
+### Doing OS-specific Stuff 🐚
 
 ```gleam
 case gleamyshell.os() {
@@ -71,7 +71,7 @@ case gleamyshell.os() {
 
 ## Upgrading to Version 2 🐚
 
-The changelog covers the breaking changes and the API documentation has been updated accordingly.
+The changelog covers the breaking changes, and the API documentation has been updated accordingly.
 
 In a nutshell:
 

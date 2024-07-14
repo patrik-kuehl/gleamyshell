@@ -92,8 +92,6 @@ pub fn os() -> OsFamily
 
 /// Returns the home directory of the current user.
 /// 
-/// This function returns an `Option` because it can fail in rare circumstances.
-/// 
 /// ## Example
 /// 
 /// ```gleam

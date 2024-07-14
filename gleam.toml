@@ -1,5 +1,5 @@
 name = "gleamyshell"
-version = "2.0.0"
+version = "2.0.1"
 description = "A cross-platform Gleam library for executing shell commands."
 licences = ["MIT"]
 repository = { type = "github", user = "patrik-kuehl", repo = "gleamyshell" }

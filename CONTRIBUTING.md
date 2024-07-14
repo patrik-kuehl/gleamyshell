@@ -27,11 +27,11 @@ To keep modules organized, you need to follow this structure:
 
 | Order |   Code Category   |
 | :---: | :---------------: |
-|   1   | public constants  |
-|   2   |   public types    |
+|   1   |   public types    |
+|   2   | public constants  |
 |   3   | public functions  |
-|   4   | private constants |
-|   5   |   private types   |
+|   4   |   private types   |
+|   5   | private constants |
 |   6   | private functions |
 
 Apart from this, just keep your code readable. Remember, code is read more often than written. Everything else is just a

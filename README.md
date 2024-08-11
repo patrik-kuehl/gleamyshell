@@ -8,6 +8,19 @@
 GleamyShell is a cross-platform Gleam library for executing shell commands that supports all non-browser targets
 (Erlang, Bun, Deno, and Node.js).
 
+## Maintenance Notice 🐚
+
+As of the 11th August, 2024, I won't be maintaining this project any longer.
+
+I don't invest time in Gleam anymore, as I encountered too many breaking changes within minor version bumps, and too
+many packages on Hex, which have been released as a first major version (1.0.0) without any battle-testing first, thus
+being prone to breaking API changes or unexpected behavior.
+
+I wish Gleam all the best, but I revert to other (enterprise-y) languages I'm already used to.
+
+If you depend on GleamyShell and/or want to maintain it, feel free to get in touch with me. I'd be willing to transfer
+the ownership of this repository and the package on Hex. No need to create a fork :v:
+
 ## When to use GleamyShell? 🐚
 
 GleamyShell provides the ability to execute shell commands on multiple targets. While this might sound amazing,

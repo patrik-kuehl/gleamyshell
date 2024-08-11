@@ -10,10 +10,10 @@ GleamyShell is a cross-platform Gleam library for executing shell commands that 
 
 ## Maintenance Notice 🐚
 
-As of the 11th August, 2024, I won't be maintaining this project any longer.
+As of the 11th of August 2024, I won't be maintaining this project any longer.
 
 I don't invest time in Gleam anymore, as I encountered too many breaking changes within minor version bumps, and too
-many packages on Hex, which have been released as a first major version (1.0.0) without any battle-testing first, thus
+many packages on Hex, which have been released as a first major version (1.0.0) without being battle-tested first, thus
 being prone to breaking API changes or unexpected behavior.
 
 I wish Gleam all the best, but I revert to other (enterprise-y) languages I'm already used to.
